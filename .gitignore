@@ -1,0 +1,14 @@
+# Windows system files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+desktop.ini
+$RECYCLE.BIN/
+
+# Temporary files
+*.tmp
+*.log
+
+# Gemini config/system folders (if any)
+.gemini/
+.system_generated/

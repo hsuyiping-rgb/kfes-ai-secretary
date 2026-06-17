@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>光復國小 AI 小秘書 - 小光</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Decorative Glowing Background Blobs -->
+  <div class="bg-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <!-- Main Application Container -->
+  <div class="app-container">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <img src="assets/xiaoguang_logo.png" alt="小光 Logo">
+        <h1>KFES AI 小秘書</h1>
+      </div>
+      
+      <ul class="sidebar-nav">
+        <li class="nav-item">
+          <a class="nav-link active" data-view="dashboard">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+            儀表板
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-view="parent-leave">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+            請假信產生器
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-view="admission-guide">
+            <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+            新生入學指南
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-view="digital-portal">
+            <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            親師數位平台
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-view="chat">
+            <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            小光對話室
+          </a>
+        </li>
+      </ul>
+      
+      <div class="sidebar-footer">
+        <span class="school-info">新北市中和區光復國民小學</span>
+        <span class="version">Xiao Guang v1.0.0</span>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      
+      <!-- Top Header -->
+      <header class="app-header">
+        <div class="header-title-area">
+          <h2 id="view-title">歡迎使用小光秘書</h2>
+        </div>
+        
+        <div class="header-meta">
+          <div class="meta-item">
+            <span class="status-dot"></span>
+            <span>小光在線服務中</span>
+          </div>
+          <div class="meta-item">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <span id="current-date">2026/06/17</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Content Body -->
+      <div class="content-body">
+
+        <!-- 1. DASHBOARD VIEW -->
+        <section id="view-dashboard" class="view-panel active">
+          <div class="card welcome-section-premium">
+            <div class="welcome-content">
+              <div class="school-identity">
+                <img src="assets/school_logo.png" alt="光復國小校徽" class="school-logo-img">
+                <div class="school-text-group">
+                  <h3>新北市中和區光復國民小學</h3>
+                  <p class="school-motto">光復情 • 人文心 • 勤學習 • 能力行</p>
+                </div>
+              </div>
+              <div class="welcome-message">
+                <h1>親愛的家長與訪客，您好！我是「小光」✨</h1>
+                <p>今天也是活力滿滿的一天！無論是幫孩子請假、查詢新生入學手續與附幼招生，還是想查詢學校數位聯絡簿、午餐菜單，我都準備好隨時協助您了。點擊左側選單，讓我為您的親校溝通與訪客諮詢帶來最溫馨的智慧服務吧！🎒</p>
+              </div>
+            </div>
+            <div class="welcome-mascots">
+              <div class="mascot-item girl-mascot">
+                <img src="assets/girl.png" alt="光復國小女童" class="mascot-img">
+                <span class="mascot-label girl">人文心 ✿ 光復情</span>
+              </div>
+              <div class="mascot-item boy-mascot">
+                <img src="assets/boy.png" alt="光復國小男童" class="mascot-img">
+                <span class="mascot-label boy">勤學習 ✿ 能力行</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon">
+                <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+              </div>
+              <div class="stat-info">
+                <h4>本月家長請假服務</h4>
+                <span id="stat-leave-count">86</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">
+                <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+              </div>
+              <div class="stat-info">
+                <h4>新生報到指南下載</h4>
+                <span id="stat-admission-count">142</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">
+                <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              </div>
+              <div class="stat-info">
+                <h4>AI 諮詢解答次數</h4>
+                <span id="stat-chat-count">3,250</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card dashboard-news">
+            <h3>重要提醒 & 親師布告欄</h3>
+            <div class="news-list">
+              <div class="news-item warning">
+                <span class="news-title">📢 重要：115 學年度小一新生入學報到作業日程已公告，請家長留意申辦時間。</span>
+                <span class="news-date">今天</span>
+              </div>
+              <div class="news-item">
+                <span class="news-title">🎒 提醒：二年級下週三戶外教育（台北市立動物園），家長同意書與回條請儘速交回喔！</span>
+                <span class="news-date">後天</span>
+              </div>
+              <div class="news-item">
+                <span class="news-title">🩺 保健：本週四上午 09:00 進行一至六年級學童含氟漆防蛀保健塗藥，請家長知悉。</span>
+                <span class="news-date">3 天後</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. LEAVE NOTICE GENERATOR VIEW -->
+        <section id="view-parent-leave" class="view-panel">
+          <div class="split-view">
+            <!-- Input Side -->
+            <div class="card" style="margin-bottom: 0; display: flex; flex-direction: column;">
+              <div style="flex-grow: 1;">
+                <h3 style="margin-bottom: 20px; color: var(--secondary-dark);">請假信設定</h3>
+                
+                <div class="form-group">
+                  <label for="leave-student-name">學生姓名</label>
+                  <input type="text" id="leave-student-name" class="form-control" placeholder="例如：林小明">
+                </div>
+                
+                <div class="form-group">
+                  <label for="leave-class">就讀班級</label>
+                  <input type="text" id="leave-class" class="form-control" placeholder="例如：二年3班">
+                </div>
+
+                <div class="form-group">
+                  <label for="leave-type">請假類別</label>
+                  <select id="leave-type" class="form-control">
+                    <option value="病假">🤒 病假 (身體不適/看醫生)</option>
+                    <option value="事假">💼 事假 (家庭出遊/有特殊事情)</option>
+                    <option value="公假">🏆 公假 (代表學校參賽)</option>
+                    <option value="喪假">🕯️ 喪假 (家屬過世)</option>
+                    <option value="其他">❓ 其他</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="leave-date">請假時間</label>
+                  <input type="text" id="leave-date" class="form-control" placeholder="例如：6月18日(四) 全天">
+                </div>
+
+                <div class="form-group">
+                  <label for="leave-reason">請假具體原因</label>
+                  <textarea id="leave-reason" class="form-control" style="min-height: 80px;" placeholder="例如：感冒發燒需要在家休養、家人帶回南部探親..."></textarea>
+                </div>
+
+                <div class="form-group">
+                  <label>請假信風格</label>
+                  <div class="tone-selector">
+                    <span class="tone-pill active" data-tone="warm">溫馨親切</span>
+                    <span class="tone-pill" data-tone="brief">禮貌簡潔</span>
+                  </div>
+                </div>
+              </div>
+
+              <button class="btn btn-primary" id="btn-generate-leave">
+                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+                生成 Line 請假通知
+              </button>
+            </div>
+
+            <!-- Output Side -->
+            <div class="card result-card" style="margin-bottom: 0; position: relative;">
+              <!-- Loading Overlay -->
+              <div class="ai-loading-overlay" id="leave-loading">
+                <div class="spinner"></div>
+                <p style="font-weight: 500; color: var(--text-main);">小光正快馬加鞭為您草擬最合禮儀的請假信...</p>
+              </div>
+
+              <div class="result-header">
+                <h3>
+                  <svg viewBox="0 0 24 24" width="20" height="20" stroke="var(--primary-color)" fill="none" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                  請假信預覽
+                </h3>
+                <button class="copy-btn" id="btn-copy-leave" style="display: none;">複製請假內容</button>
+              </div>
+
+              <div class="result-body">
+                <div class="result-placeholder" id="leave-placeholder">
+                  <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                  <p>在左側輸入孩子請假資訊，生成的請假通知將會在此處呈現。</p>
+                </div>
+                
+                <div class="result-content preview-document" id="leave-output" style="white-space: pre-wrap; font-family: var(--font-family);">
+                  <!-- Generated content goes here -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. ADMISSION GUIDE VIEW -->
+        <section id="view-admission-guide" class="view-panel">
+          <div class="split-view">
+            <!-- Input Side -->
+            <div class="card" style="margin-bottom: 0; display: flex; flex-direction: column;">
+              <div style="flex-grow: 1;">
+                <h3 style="margin-bottom: 20px; color: var(--secondary-dark);">入學與報到指南</h3>
+
+                <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 20px;">
+                  歡迎即將成為光復大家庭一份子的家長與寶貝們！請點選您想查詢的指南類別，小光將會提供最新且最完整的文件與日程清單喔。
+                </p>
+
+                <div class="form-group">
+                  <label for="admission-type">請選擇指南類別</label>
+                  <select id="admission-type" class="form-control" style="min-height: 50px;">
+                    <option value="小一新生報到">🎒 小一新生入學與報到指南</option>
+                    <option value="轉學生申辦">🔄 轉學生轉入與轉出申辦手續</option>
+                    <option value="幼兒園招生">👶 光復附幼招生與報名簡章</option>
+                  </select>
+                </div>
+              </div>
+
+              <button class="btn btn-primary" id="btn-generate-admission">
+                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+                獲取指南說明與清單
+              </button>
+            </div>
+
+            <!-- Output Side -->
+            <div class="card result-card" style="margin-bottom: 0; position: relative;">
+              <!-- Loading Overlay -->
+              <div class="ai-loading-overlay" id="admission-loading">
+                <div class="spinner"></div>
+                <p style="font-weight: 500; color: var(--text-main);">小光正向教務處註冊組索取最新報到規定...</p>
+              </div>
+
+              <div class="result-header">
+                <h3>
+                  <svg viewBox="0 0 24 24" width="20" height="20" stroke="var(--primary-color)" fill="none" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                  指南內容預覽
+                </h3>
+                <button class="copy-btn" id="btn-copy-admission" style="display: none;">複製指南</button>
+              </div>
+
+              <div class="result-body">
+                <div class="result-placeholder" id="admission-placeholder">
+                  <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                  <p>請在左側選擇入學或轉學類別，辦理說明與攜帶清單將在此呈現。</p>
+                </div>
+                
+                <div class="result-content preview-document" id="admission-output">
+                  <!-- Generated content goes here -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. DIGITAL PORTAL VIEW -->
+        <section id="view-digital-portal" class="view-panel">
+          <div style="margin-bottom: 20px;">
+            <p style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.5;">
+              小光為家長彙整了本校最常使用的數位與親師互動平台傳送門，您可以點選連結直接開啟，快速查詢孩子的在校日常與行政公告喔！
+            </p>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px;">
+            <!-- Portal Card 1 -->
+            <div class="card" style="margin-bottom: 0; display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                  <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(74, 144, 226, 0.1); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="var(--secondary-color)" fill="none" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                  </div>
+                  <h4 style="font-size: 1.05rem; font-weight: 600;">新北市親師生平台</h4>
+                </div>
+                <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 15px;">
+                  新北市教育局專為家長與學生設計的整合式服務。家長登入後，可快速檢視孩子的聯絡簿通知、請假狀況與班級日常，亦可開啟多樣化數位學習資源。
+                </p>
+              </div>
+              <a href="https://pts.ntpc.edu.tw/#/main" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="text-decoration: none; width: 100%;">
+                前往親師生平台
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" style="margin-left: 4px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+              </a>
+            </div>
+
+            <!-- Portal Card 2 -->
+            <div class="card" style="margin-bottom: 0; display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                  <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(255, 159, 67, 0.1); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="var(--primary-color)" fill="none" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                  </div>
+                  <h4 style="font-size: 1.05rem; font-weight: 600;">校務行政系統 (ESA)</h4>
+                </div>
+                <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 15px;">
+                  提供家長查詢孩子在校的學期出缺席統計、獎懲紀錄、多元評量與期末成績。以家長帳號登入系統，能深入了解孩子的學術成長路徑與歷史紀錄。
+                </p>
+              </div>
+              <a href="https://esa.ntpc.edu.tw/" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="text-decoration: none; width: 100%;">
+                前往校務行政系統
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" style="margin-left: 4px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+              </a>
+            </div>
+
+            <!-- Portal Card 3 -->
+            <div class="card" style="margin-bottom: 0; display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                  <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(46, 204, 113, 0.1); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="var(--success-color)" fill="none" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+                  </div>
+                  <h4 style="font-size: 1.05rem; font-weight: 600;">光復附幼 Google 專網</h4>
+                </div>
+                <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 15px;">
+                  光復國小附設幼兒園專網。園所最新公告、招生日程、教學主體計畫、作息安排，以及孩子們精采的校園生活照片寫真，皆在專頁中呈現。
+                </p>
+              </div>
+              <a href="https://sites.google.com/view/kfeskid" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="text-decoration: none; width: 100%;">
+                前往光復附幼專網
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" style="margin-left: 4px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+              </a>
+            </div>
+
+            <!-- Portal Card 4 -->
+            <div class="card" style="margin-bottom: 0; display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                  <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(231, 76, 60, 0.1); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="var(--error-color)" fill="none" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                  </div>
+                  <h4 style="font-size: 1.05rem; font-weight: 600;">學校學期行事曆</h4>
+                </div>
+                <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 15px;">
+                  方便家長隨時查閱或下載光復國小 114 學年度最新學期行事曆 PDF，掌握學校考試日期、寒暑假安排、休假、返校日及各處室重要活動日程。
+                </p>
+              </div>
+              <a href="https://www.kfes.ntpc.edu.tw/var/file/0/1000/img/134/499756158.pdf" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="text-decoration: none; width: 100%;">
+                查閱學期行事曆
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" style="margin-left: 4px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+              </a>
+            </div>
+
+            <!-- Portal Card 5 -->
+            <div class="card" style="margin-bottom: 0; display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                  <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(155, 89, 182, 0.1); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="#9b59b6" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4l3 3"></path></svg>
+                  </div>
+                  <h4 style="font-size: 1.05rem; font-weight: 600;">午餐與環境衛生專區</h4>
+                </div>
+                <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 15px;">
+                  隨時關注學童的飲食健康！此專區提供每月午餐菜單下載、每日菜色實體照公佈、食材產地標示與食安檢驗合格證書，落實讓孩子吃得安心。
+                </p>
+              </div>
+              <a href="https://sites.google.com/mail100.kfes.ntpc.edu.tw/studentaffairs/%E9%87%8D%E9%BB%9E%E5%B7%A5%E4%BD%9C-%E7%92%B0%E5%A2%83%E8%A1%9B%E7%94%9F%E6%95%99%E8%82%B2/3-1%E5%8D%88%E9%A4%90%E5%B0%88%E5%8D%80" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="text-decoration: none; width: 100%;">
+                前往午餐資訊專區
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" style="margin-left: 4px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <!-- 5. CHAT VIEW -->
+        <section id="view-chat" class="view-panel">
+          <div class="chat-container">
+            <!-- Message Log Area -->
+            <div class="chat-messages" id="chat-messages-log">
+              <!-- System Welcome Message -->
+              <div class="message received">
+                <div class="message-avatar">
+                  <img src="assets/xiaoguang_logo.png" alt="小光">
+                </div>
+                <div class="message-bubble">
+                  歡迎來到新北市中和區光復國小家長與訪客諮詢室！我是您的 AI 小秘書小光！✨<br>如果您對「學生請假手續」、「冷氣開放收費」、「如何進行小一新生報到或轉學」、「幼兒園招生」等有任何疑問，都可以隨時在這裡向我提問喔！下面有一些常用校園問題，您也可以直接點選：
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Reply Chips -->
+            <div class="chat-chips">
+              <span class="chip" data-question="學生請假怎麼申辦？">🤒 學生請假規定與流程</span>
+              <span class="chip" data-question="班級冷氣遙控器怎麼借？使用費怎麼收？">❄️ 班級冷氣使用細則</span>
+              <span class="chip" data-question="介紹一下光復國小與學校願景？">🏫 認識光復與學校願景</span>
+              <span class="chip" data-question="光復國小最近有什麼最新消息與師生榮譽？">🏆 最新消息與師生榮譽</span>
+            </div>
+
+            <!-- Chat input Area -->
+            <div class="chat-input-area">
+              <textarea id="chat-input-box" placeholder="輸入你想詢問小光的問題... (例如：新生報到需要帶什麼文件？)"></textarea>
+              <button class="chat-send-btn" id="btn-send-chat">
+                <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              </button>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
