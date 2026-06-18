@@ -15,6 +15,9 @@
     <div class="blob blob-3"></div>
   </div>
 
+  <!-- Sidebar Overlay for Mobile Drawer -->
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
   <!-- Main Application Container -->
   <div class="app-container">
     
@@ -70,6 +73,9 @@
       <!-- Top Header -->
       <header class="app-header">
         <div class="header-title-area">
+          <button class="hamburger-btn" id="btn-hamburger" style="display: none;">
+            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
           <h2 id="view-title">歡迎使用小光秘書</h2>
         </div>
         
@@ -106,11 +112,11 @@
             </div>
             <div class="welcome-mascots">
               <div class="mascot-item girl-mascot">
-                <img src="assets/girl.png" alt="光復國小女童" class="mascot-img">
+                <img src="assets/kfes-child-girl-final.png" alt="光復國小女童" class="mascot-img">
                 <span class="mascot-label girl">人文心 ✿ 光復情</span>
               </div>
               <div class="mascot-item boy-mascot">
-                <img src="assets/boy.png" alt="光復國小男童" class="mascot-img">
+                <img src="assets/kfes-child-boy-final.png" alt="光復國小男童" class="mascot-img">
                 <span class="mascot-label boy">勤學習 ✿ 能力行</span>
               </div>
             </div>
@@ -148,7 +154,7 @@
 
           <div class="card dashboard-news">
             <h3>重要提醒 & 親師布告欄</h3>
-            <div class="news-list">
+            <div class="news-list" id="dashboard-news-list">
               <div class="news-item warning">
                 <span class="news-title">📢 重要：115 學年度小一新生入學報到作業日程已公告，請家長留意申辦時間。</span>
                 <span class="news-date">今天</span>
@@ -416,6 +422,32 @@
         <!-- 5. CHAT VIEW -->
         <section id="view-chat" class="view-panel">
           <div class="chat-container">
+            <!-- Chat Header with API config -->
+            <div class="chat-header">
+              <div class="chat-title">
+                <div class="chat-status-indicator"></div>
+                <span>小光 AI 諮詢室 (新北市光復國小)</span>
+              </div>
+              <div class="chat-mode-badge" id="chat-mode-badge">在地知識庫模式</div>
+              <button class="chat-settings-btn" id="btn-chat-settings" title="設定 Gemini API Key">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                <span>AI 設定</span>
+              </button>
+            </div>
+            
+            <!-- API Settings Panel (Hidden by default) -->
+            <div class="chat-settings-panel" id="chat-settings-panel" style="display: none;">
+              <h4>🤖 Google Gemini AI 智慧模式設定</h4>
+              <p>請輸入您的 Google Gemini API 金鑰以啟動「AI 智慧模式」。小光將會根據真實的 Gemini 模型為您詳細解答所有來訪問題！(金鑰會安全保存在您的瀏覽器本地快取中)</p>
+              <div class="settings-form">
+                <input type="password" id="gemini-api-key" placeholder="輸入您的 Google Gemini API Key (例如：AIzaSy...)" class="form-control" style="flex-grow: 1; margin-bottom: 0; min-height: unset; padding: 8px 12px; font-size: 0.88rem; height: 36px;">
+                <div class="settings-actions">
+                  <button class="btn btn-primary" id="btn-save-key" style="width: auto; padding: 8px 16px; font-size: 0.88rem; height: 36px;">儲存金鑰</button>
+                  <button class="btn btn-secondary" id="btn-clear-key" style="width: auto; padding: 8px 16px; font-size: 0.88rem; height: 36px;">清除</button>
+                </div>
+              </div>
+            </div>
+
             <!-- Message Log Area -->
             <div class="chat-messages" id="chat-messages-log">
               <!-- System Welcome Message -->
