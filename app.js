@@ -847,6 +847,163 @@ document.addEventListener('DOMContentLoaded', () => {
     return responseText;
   }
 
+  // --- Google Gemini API Async Response Handler ---
+  async function generateAIResponse(userMessage) {
+    const apiKey = localStorage.getItem('gemini_api_key');
+    const startTime = Date.now();
+    let responseText;
+
+    if (!apiKey) {
+      responseText = getAIResponse(userMessage);
+    } else {
+      try {
+        const uniqueKB = {};
+        const mainKeys = ['交通', '鮮奶', '請假', '冷氣', '認識', '最新', '處室', '報修', '幼兒園', '平台', '招生', '午餐', '一年一班', '校長'];
+        const dynamicContext = [];
+        mainKeys.forEach(k => {
+          if (chatKnowledgeBase[k]) {
+            dynamicContext.push(`[主題：${k}]\n${chatKnowledgeBase[k]}`);
+          }
+        });
+
+        // Add lunch menu context dynamically if dates are queried
+        if (userMessage.includes('月') || userMessage.includes('/') || /\d+/.test(userMessage)) {
+          for (const k in chatKnowledgeBase) {
+            if ((k.includes('月') || k.includes('/')) && userMessage.includes(k.replace('月', '').replace('日', '').trim())) {
+              dynamicContext.push(`[主題：${k} 午餐菜單]\n${chatKnowledgeBase[k]}`);
+            }
+          }
+        }
+
+        const kbContextString = dynamicContext.join('\n\n');
+
+        const systemInstruction = `你是一位親切、活潑且熱心的 AI 助理，名叫「小光」，擔任新北市中和區光復國小 (Kuangfu Elementary School) 的 AI 智慧秘書。
+你的主要任務是為家長、學生與訪客親切地解答關於學校事務的疑問。
+
+請遵守以下規則：
+1. 以下為光復國小官方已知資料庫（提供給你的事實背景）：
+${kbContextString}
+
+2. 對於使用者的疑問，若能從上述背景資料庫中找到對應的官方事實，請務必【優先且完全依據】資料庫事實進行回答（可進行人性化的口語修飾或條理化整理，但切勿編造與資料庫矛盾的事實）。
+3. 如果使用者的問題與背景資料庫無關（例如：一般聊天、功課討論、一般常識），請以「小光」的親切口吻，使用你自身的 AI 知識庫進行回答。
+4. 如果使用者的問題是有關光復國小的校務，但上述官方已知資料庫中【完全沒有】相關記錄，請你用自身的知識庫進行合理的通用回答，但在回答的最後必須親切地提醒：
+   「小光提示：以上回答為 AI 智慧模式的通用說明。若需要學校官方的精確確認，請於上班時間（週一至週五 08:00 - 16:00）致電本校總機電話：(02) 3234-8654，將有專人為您服務喔！✿」
+5. 回答請使用繁體中文，語氣保持禮貌、溫暖、活潑。可以用適當的表情符號（Emojis）。請保持排版乾淨美觀。`;
+
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            contents: [{
+              parts: [{ text: userMessage }]
+            }],
+            systemInstruction: {
+              parts: [{ text: systemInstruction }]
+            },
+            generationConfig: {
+              temperature: 0.7,
+              maxOutputTokens: 2048
+            }
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`Gemini API returned status ${response.status}`);
+        }
+
+        const data = await response.json();
+        if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0]) {
+          responseText = data.candidates[0].content.parts[0].text;
+        } else {
+          throw new Error("Invalid response format from Gemini API");
+        }
+      } catch (err) {
+        console.warn("[Gemini API] Failed to fetch smart response (falling back to local DB):", err);
+        responseText = getAIResponse(userMessage);
+      }
+    }
+
+    // Ensure a minimum delay of 1000ms for natural feeling typing indicator
+    const elapsedTime = Date.now() - startTime;
+    if (elapsedTime < 1000) {
+      await new Promise(resolve => setTimeout(resolve, 1000 - elapsedTime));
+    }
+
+    return responseText;
+  }
+
+  // --- AI Settings Toggle & LocalStorage Logic ---
+  const btnChatSettings = document.getElementById('btn-chat-settings');
+  const chatSettingsPanel = document.getElementById('chat-settings-panel');
+  const inputGeminiApiKey = document.getElementById('gemini-api-key');
+  const btnSaveKey = document.getElementById('btn-save-key');
+  const btnClearKey = document.getElementById('btn-clear-key');
+  const modeBadge = document.getElementById('chat-mode-badge');
+
+  function updateModeBadge(hasKey) {
+    if (!modeBadge) return;
+    if (hasKey) {
+      modeBadge.textContent = '✨ AI 智慧模式';
+      modeBadge.style.backgroundColor = 'rgba(138, 75, 243, 0.15)';
+      modeBadge.style.color = '#8a4bf3';
+    } else {
+      modeBadge.textContent = '在地知識庫模式';
+      modeBadge.style.backgroundColor = '';
+      modeBadge.style.color = '';
+    }
+  }
+
+  // Toggle Settings Panel
+  if (btnChatSettings && chatSettingsPanel) {
+    btnChatSettings.addEventListener('click', () => {
+      const isHidden = chatSettingsPanel.style.display === 'none';
+      chatSettingsPanel.style.display = isHidden ? 'block' : 'none';
+    });
+  }
+
+  // Load Saved API Key
+  const savedKey = localStorage.getItem('gemini_api_key');
+  if (savedKey) {
+    if (inputGeminiApiKey) {
+      inputGeminiApiKey.value = savedKey;
+    }
+    updateModeBadge(true);
+  }
+
+  // Save Key
+  if (btnSaveKey && inputGeminiApiKey) {
+    btnSaveKey.addEventListener('click', () => {
+      const key = inputGeminiApiKey.value.trim();
+      if (!key) {
+        alert('請輸入有效的 Google Gemini API Key！');
+        return;
+      }
+      localStorage.setItem('gemini_api_key', key);
+      updateModeBadge(true);
+      if (chatSettingsPanel) {
+        chatSettingsPanel.style.display = 'none';
+      }
+      alert('🔑 Gemini API 金鑰已成功儲存，小光 AI 智慧模式已啟動！');
+    });
+  }
+
+  // Clear Key
+  if (btnClearKey) {
+    btnClearKey.addEventListener('click', () => {
+      localStorage.removeItem('gemini_api_key');
+      if (inputGeminiApiKey) {
+        inputGeminiApiKey.value = '';
+      }
+      updateModeBadge(false);
+      if (chatSettingsPanel) {
+        chatSettingsPanel.style.display = 'none';
+      }
+      alert('🧹 API 金鑰已清除，小光已恢復為在地知識庫模式。');
+    });
+  }
+
   function handleSendChat() {
     if (!chatInputBox) return;
     const text = chatInputBox.value.trim();
@@ -875,17 +1032,20 @@ document.addEventListener('DOMContentLoaded', () => {
     chatMessagesLog.appendChild(typingMsgDiv);
     chatMessagesLog.scrollTop = chatMessagesLog.scrollHeight;
 
-    setTimeout(() => {
+    generateAIResponse(text).then(response => {
       const tempIndicator = document.getElementById('temp-typing-indicator');
       if (tempIndicator) tempIndicator.remove();
 
-      const response = getAIResponse(text);
       appendMessage('received', response);
       
       // Update statistics
       totalChatResponses += 1;
       updateDashboardStats();
-    }, 1200);
+    }).catch(err => {
+      const tempIndicator = document.getElementById('temp-typing-indicator');
+      if (tempIndicator) tempIndicator.remove();
+      appendMessage('received', getAIResponse(text));
+    });
   }
 
   if (btnSendChat) {
@@ -925,17 +1085,20 @@ document.addEventListener('DOMContentLoaded', () => {
       chatMessagesLog.appendChild(typingMsgDiv);
       chatMessagesLog.scrollTop = chatMessagesLog.scrollHeight;
 
-      setTimeout(() => {
+      generateAIResponse(questionText).then(response => {
         const tempIndicator = document.getElementById('temp-typing-indicator');
         if (tempIndicator) tempIndicator.remove();
 
-        const response = getAIResponse(questionText);
         appendMessage('received', response);
 
         // Update statistics
         totalChatResponses += 1;
         updateDashboardStats();
-      }, 1000);
+      }).catch(err => {
+        const tempIndicator = document.getElementById('temp-typing-indicator');
+        if (tempIndicator) tempIndicator.remove();
+        appendMessage('received', getAIResponse(questionText));
+      });
     });
   });
 
