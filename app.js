@@ -368,6 +368,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Parent/Visitor playful Q&A Database
   const chatKnowledgeBase = {
+    '交通': `🚗 **如何前往光復國小？交通與導覽指南！** ✨
+
+光復國小地址為：**新北市中和區光環路二段 1 號** 📍
+學校鄰近板橋與中和交界處，您可以透過以下幾種方式前來喔：
+
+1. 🚇 **搭乘捷運轉乘**：
+   - **環狀線「中原站」**：最鄰近的捷運站！下車後步行約 15 分鐘即可抵達學校，或者在捷運站外租借 YouBike 騎乘前往，非常便利！🚲
+   - **板南線「板橋站」、「新埔站」或「龍山寺站」**：出站後轉乘聯營公車即可抵達。
+2. 🚌 **搭乘市區公車**：
+   - **直達校門口（停靠「光復國小」站）**：搭乘 **藍 33**、**F512 (副線/免巴)** 即可直達校門口！
+   - **鄰近站牌（「埔墘派出所」站）**：搭乘 **234**、**265**、**705** 至埔墘派出所站下車，沿光復街前行，步行約 5-8 分鐘即可到達。
+   - **鄰近站牌（「長壽里」站）**：搭乘 **231**、**793**、**藍 31** 至長壽里站下車，沿三民路二段步行前往即可。
+3. 🚗 **自行開車/騎乘機車**：
+   - 可行經新北環河快速道路，由「光復街/環中路」匝道出口下，接光環路二段即可抵達。
+   - 學校大門旁即為埔墘公園，設有地下停車場，周邊亦有路邊機車停車格，方便您停車！🅿️
+4. 🚲 **YouBike 租借**：
+   - 學校前方「埔墘公園」旁即設有 YouBike 站點，方便您騎乘往返鄰近捷運站。`,
     '請假': `🤒 **小光的學生請假超簡單指南！** ✨
 
 別擔心！小朋友身體不舒服或有事情，請按照下面步驟跟學校請假喔：
@@ -627,6 +644,25 @@ document.addEventListener('DOMContentLoaded', () => {
   chatKnowledgeBase['校園平面圖'] = chatKnowledgeBase['一年一班'];
   chatKnowledgeBase['地圖'] = chatKnowledgeBase['一年一班'];
   chatKnowledgeBase['位置'] = chatKnowledgeBase['一年一班'];
+
+  // 交通導覽相關別名
+  chatKnowledgeBase['到校'] = chatKnowledgeBase['交通'];
+  chatKnowledgeBase['怎麼去'] = chatKnowledgeBase['交通'];
+  chatKnowledgeBase['捷運'] = chatKnowledgeBase['交通'];
+  chatKnowledgeBase['公車'] = chatKnowledgeBase['交通'];
+  chatKnowledgeBase['地址'] = chatKnowledgeBase['交通'];
+  chatKnowledgeBase['開車'] = chatKnowledgeBase['交通'];
+  chatKnowledgeBase['停車'] = chatKnowledgeBase['交通'];
+  chatKnowledgeBase['怎麼走'] = chatKnowledgeBase['交通'];
+  chatKnowledgeBase['交通導覽'] = chatKnowledgeBase['交通'];
+  chatKnowledgeBase['交通指南'] = chatKnowledgeBase['交通'];
+  chatKnowledgeBase['如何到'] = chatKnowledgeBase['交通'];
+  chatKnowledgeBase['怎麼到'] = chatKnowledgeBase['交通'];
+  chatKnowledgeBase['如何去'] = chatKnowledgeBase['交通'];
+  chatKnowledgeBase['去光復'] = chatKnowledgeBase['交通'];
+  chatKnowledgeBase['到光復'] = chatKnowledgeBase['交通'];
+  chatKnowledgeBase['如何前往'] = chatKnowledgeBase['交通'];
+  chatKnowledgeBase['前往'] = chatKnowledgeBase['交通'];
 
 
   // === 學生午餐菜單資料庫 ===
