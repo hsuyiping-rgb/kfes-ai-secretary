@@ -922,7 +922,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Create backdrop element dynamically
     const backdrop = document.createElement('div');
     backdrop.className = 'sidebar-backdrop';
-    document.body.appendChild(backdrop);
+    sidebar.parentElement.appendChild(backdrop);
 
     btnHamburger.addEventListener('click', () => {
       sidebar.classList.add('active');
