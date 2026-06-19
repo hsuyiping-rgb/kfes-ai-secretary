@@ -288,6 +288,58 @@ document.addEventListener('DOMContentLoaded', () => {
   const chatInputBox = document.getElementById('chat-input-box');
   const btnSendChat = document.getElementById('btn-send-chat');
   const chatChips = document.querySelectorAll('.chip');
+  const chatChipsContainer = document.querySelector('.chat-chips');
+
+  function formatMarkdownToHTML(text) {
+    if (!text) return "";
+    let html = text;
+    
+    // Replace **bold** with <strong>bold</strong>
+    html = html.replace(/\*\*([^\*]+)\*\*/g, '<strong>$1</strong>');
+    
+    // Replace ### header with a styled header div
+    html = html.replace(/###\s+([^\n]+)/g, '<div class="chat-section-header">$1</div>');
+    
+    // Replace [text](url) with <a href="$2" target="_blank" class="chat-link">$1</a>
+    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" class="chat-link">$1</a>');
+    
+    // Parse list items and add appropriate HTML breaks
+    const lines = html.split('\n');
+    const processedLines = lines.map((line, idx) => {
+      let trimmed = line.trim();
+      if (trimmed === '---') {
+        return '';
+      }
+      if (trimmed.startsWith('* ') || trimmed.startsWith('- ') || trimmed.startsWith('• ')) {
+        let content = trimmed.substring(2);
+        return `<div class="bullet-item">🔹 ${content}</div>`;
+      }
+      
+      // If it's a section header, we don't need a trailing <br> since it's a block element
+      if (line.includes('class="chat-section-header"')) {
+        return line;
+      }
+      
+      // Don't append <br> if it's the last line and it's empty
+      if (idx === lines.length - 1 && trimmed === '') {
+        return '';
+      }
+      
+      return line + '<br>';
+    });
+    
+    html = processedLines.join('');
+    
+    // Cleanup extra HTML breaks around block elements to maintain single empty line spacing
+    html = html.replace(/(<\/div>)\s*<br\s*\/?>/gi, '$1');
+    html = html.replace(/<br\s*\/?>\s*(<div[^>]*>)/gi, '$1');
+    html = html.replace(/(<br\s*\/?>\s*){3,}/gi, '<br><br>'); // Collapse 3+ breaks to a single empty line (2 breaks)
+    
+    // Strip any remaining standalone asterisks *
+    html = html.replace(/\*/g, '');
+    
+    return html;
+  }
 
   function appendMessage(sender, text) {
     if (!chatMessagesLog) return;
@@ -299,12 +351,14 @@ document.addEventListener('DOMContentLoaded', () => {
       avatarSrc = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&h=100&q=80'; // Mock parent avatar
     }
 
+    const displayText = (sender === 'sent') ? text.replace(/\n/g, '<br>') : formatMarkdownToHTML(text);
+
     msgDiv.innerHTML = `
       <div class="message-avatar">
         <img src="${avatarSrc}" alt="${sender === 'sent' ? '家長' : '小光'}">
       </div>
       <div class="message-bubble">
-        ${text.replace(/\n/g, '<br>')}
+        ${displayText}
       </div>
     `;
 
@@ -326,18 +380,45 @@ document.addEventListener('DOMContentLoaded', () => {
 1. **冷氣開放標準**：當教室溫度達到 **28℃ 以上**，或者外面空氣品質不好、教室悶悶的時候，老師跟值日生就可以打開冷氣啦！風扇也要一起開更涼快喔！💨
 2. **冷氣卡與遙控器**：卡片跟遙控器都在導師那邊！如果卡片裡面的錢用完了，班級可以一起收冷氣費，派代表去總務處出納組儲值，冷氣官方就會繼續運作啦！卡片要好好保管喔！💳
 3. **節約能源超重要**：如果大家要離開教室超過 30 分鐘（像是去體育課、電腦課），一定要記得把冷氣關掉！我們都是省電小達人！🌿`,
-    '認識': `🏫 **歡迎來到我們最棒的新北市中和區光復國小！** ✨
+    '認識': `🏫 **認識我們美麗的——新北市中和區光復國小** ✨
 
-小光要向您驕傲介紹我們美麗的校園特色喔：
-1. **我們的核心理念**：
-   - **光復情 • 人文心 • 勤學習 • 能力行**！這就是我們每天努力的方向喔！評語跟吉祥物也都是以此設計的呢！✿
-2. **超級厲害的國際交流**：
-   - 我們光復國小是新北市的國際交流重點學校喔！我們已經跟超優秀的**美國英華學院 (Yinghua Academy)** 簽訂為姊妹校啦！
-   - 我們還跟**美國百老匯小學**進行了整整兩年的書信往來，最近外國小朋友還來我們學校相見歡，大家玩得不亦樂乎，國際視野滿分！🌍
-3. **美味又有意義的食育教育**：
-   - 學校攜手家樂福文教基金會，帶領 1500 位小朋友一起化身為「i家超人」進行大闖關！讓大家在遊戲中學會珍惜食物、愛護地球，成為環境永續環保小尖兵！🌱
-4. **充滿活力的大家庭**：
-   - 包含校長室、教務處、學務處、總務處、輔導室、人事室、會計室，還有我們最可愛的「光復附幼」幼兒園喔！🏫`,
+小光帶您一起探索光復國小的建校歷史、基本資料，以及豐富有趣的特色社團與專屬課程喔！✿
+
+---
+
+### 📌 一、 學校基本資料
+*   **學校全銜**：新北市中和區光復國民小學 (New Taipei City Kuangfu Elementary School)
+*   **學校校址**：新北市中和區光環路二段 1 號 📍
+*   **核心理念（願景）**：以「**光復心 • 人文情 • 勤學習 • 能力行**」為宗旨，帶領學童適性適所、快樂成長。
+*   **班級學制**：除普通班級外，設有光譜班（特教資源班）、聽障巡迴輔導班，以及深具口碑的「光復附幼」幼兒園。👶
+
+---
+
+### 📜 二、 創校歷史與背景
+*   **創校宗旨**：本校的成立是為了解決鄰近板橋區「埔墘國小」及「海山國小」學生過多、增長壓力過大的飽和問題。
+*   **創校歷程**：自民國 77 年起展開規劃與籌備，前後歷經十年心血，於**民國 87 年（1998 年）**正式招生，是當時少數歷經「十年磨一劍」精心籌建的優質新設小學。
+
+---
+
+### 🔠 三、 學校特色課程與教學亮點
+*   **🌍 國際教育與雙語推動**：
+    - 作為新北市國際交流重點學校，我們與美國、韓國、馬來西亞等多國學校締結合作。
+    - 特別是與美國優秀的**英華學院 (Yinghua Academy)** 簽訂為姊妹校，並與美國百老匯小學開展筆友信件往來，提供多元的跨國線上文化交流，國際視野滿分！
+*   **🌱 四季食農生命教育**：
+    - 學校設有特色「**日光農場**」，落實「春青蔥、夏艾草、秋地瓜、冬蘿蔔」的四季種植體驗課程，引領學童親自農務，與大自然及土地建立深厚情感。
+*   **♻️ SDGs 永續議題融入**：
+    - 結合聯合國永續目標，將環境保育、氣候變遷與社會關懷等主題融入跨領域課程，課程方案曾榮獲全國國際教育特優肯定！
+    - 攜手家樂福文教基金會舉辦「i家超人」闖關活動，推動愛惜食物與環境永續教育。
+
+---
+
+### 🎺 四、 多元展能特色社團（校隊）
+*   **🎷 光復管樂團**：
+    - 成立已逾 25 年的指標型音樂性校隊，在全國音樂比賽中多次榮獲「特優」佳績，更曾遠赴韓國「濟州國際管樂節」勇奪金牌獎！
+*   **⚔️ 傳承禮儀的劍道社/隊**：
+    - 本校發展多年的特色體育團隊，不僅訓練體能與防身，更重視「知禮守儀」與「練心」，培養學子專注、獨立與正向心態。
+*   **💃 活力舞蹈團與科學社團**：
+    - 兼顧動靜態發展，透過肢體開發舞蹈團及多元科學探索社團，讓孩子們發揮個人興趣，展現獨特光芒！`,
     '最新': `🏆 **光復國小超狂榮譽榜！快來為得獎師生拍拍手！** 🎉
 
 我們光復的小程序跟老師真的太強了，快來看看最近有什麼好消息：
@@ -467,7 +548,23 @@ document.addEventListener('DOMContentLoaded', () => {
 *   **🗣️ 本土語文 (閩南語)**：
     - 採用 **康軒版**
 
-例如：若您想查詢**一年級國語**，本校採用的是 **康軒版** 喔！如果有轉學準備需要買書，可以參考以上版本。✿`
+例如：若您想查詢**一年級國語**，本校採用的是 **康軒版** 喔！如果有轉學準備需要買書，可以參考以上版本。✿`,
+    '一年一班': `🏫 **光復國小班級教室位置指引！** ✨
+
+您詢問的 **一年一班（1年1班）** 教室地點是在：
+*   **所在大樓**：**黃蝶樓 1 樓** ✿
+*   **聯絡分機**：**101**
+
+**🌈 光復國小彩虹校舍配置簡介：**
+我們光復國小的七棟校舍是以「彩虹」命名，象徵帶領孩子們跨越虹橋喔：
+1. 🔴 **紅楓樓**：行政處室與普通教室
+2. 🟠 **澄陽樓** (或稱橙陽樓)：普通教室
+3. 🟡 **黃蝶樓**：低年級教室（一年一班就在這裡喔！）
+4. 🟢 **綠水樓**：中高年級教室
+5. 🔵 **藍天樓**：中高年級教室
+6. 🟣 **靛海樓** 與 **紫霞樓**：專科教室與活動空間
+
+如果您想查詢其他班級位置或需要詳細的校園平面圖，歡迎在上班時間（週一至週五 08:00 - 16:00）致電學校總機：**(02) 3234-8654**，我們將有專人為您解答喔！`
   };
 
   chatKnowledgeBase['願景'] = chatKnowledgeBase['認識'];
@@ -477,6 +574,7 @@ document.addEventListener('DOMContentLoaded', () => {
   chatKnowledgeBase['榮譽'] = chatKnowledgeBase['最新'];
   chatKnowledgeBase['新聞'] = chatKnowledgeBase['最新'];
   chatKnowledgeBase['消息'] = chatKnowledgeBase['最新'];
+  chatKnowledgeBase['榮譽'] = chatKnowledgeBase['最新'];
   chatKnowledgeBase['教務'] = chatKnowledgeBase['處室'];
   chatKnowledgeBase['學務'] = chatKnowledgeBase['處室'];
   chatKnowledgeBase['總務'] = chatKnowledgeBase['處室'];
@@ -513,10 +611,121 @@ document.addEventListener('DOMContentLoaded', () => {
   chatKnowledgeBase['聯絡'] = chatKnowledgeBase['電話'];
   chatKnowledgeBase['信箱'] = chatKnowledgeBase['電話'];
 
+  // 一年一班與平面圖相關別名
+  chatKnowledgeBase['1年1班'] = chatKnowledgeBase['一年一班'];
+  chatKnowledgeBase['一年1班'] = chatKnowledgeBase['一年一班'];
+  chatKnowledgeBase['教室位置'] = chatKnowledgeBase['一年一班'];
+  chatKnowledgeBase['平面圖'] = chatKnowledgeBase['一年一班'];
+  chatKnowledgeBase['校園平面圖'] = chatKnowledgeBase['一年一班'];
+  chatKnowledgeBase['地圖'] = chatKnowledgeBase['一年一班'];
+  chatKnowledgeBase['位置'] = chatKnowledgeBase['一年一班'];
+
+
+  // === 學生午餐菜單資料庫 ===
+  chatKnowledgeBase['6月1日'] = `📅 **115年6月1日 (一) 學生午餐菜單** 🍱\n\n【一、三、四年級 (雙翼食品 - 葷食)】\n• 主食：糙米飯 (白米、糙米)\n• 主菜：紅蔥豬排X1 (豬排X1 滷)\n• 副菜：什錦羹 (筍、風味羹、紅蘿蔔 煮)\n• 蔬菜：蝦香高麗 (高麗菜、蝦皮 炒) 【履歷 (青菜)】\n• 湯品：味噌湯 (豆腐、味噌)\n\n【二、五、六年級 (久翔食品 - 葷食)】\n• 主食：白飯 (白米)\n• 主菜：古早味豬排 (豬排(X1)-滷)\n• 副菜：柴香油豆腐 (油豆腐、柴魚-煮)\n• 蔬菜：白菜滷 (大白菜、紅蘿蔔-煮) 【產銷 (履歷)】\n• 湯品：冬瓜雞湯 (冬瓜、雞骨)\n\n【二、五、六年級 (久翔食品 - 素食)】\n• 主食：白飯 (白米)\n• 主菜：清蒸素魚排X1 (素魚排(X1)-蒸)\n• 副菜一：番茄肉醬 (豆干、番茄、素絞肉、毛豆仁-煮)\n• 副菜二：芝麻海根 (海根、紅蘿蔔、芝麻-)\n• 副菜三：醬拌秋葵 (煮 秋葵-煮)\n• 青菜：寧波年糕 (年糕、青菜、時蔬、素肉絲-煮) 【產銷履歷】\n• 湯品：青木瓜湯 (青木瓜、白木耳)\n`;
+  chatKnowledgeBase['六月1日'] = chatKnowledgeBase['6月1日'];
+  chatKnowledgeBase['6/1'] = chatKnowledgeBase['6月1日'];
+  chatKnowledgeBase['6月2日'] = `📅 **115年6月2日 (二) 學生午餐菜單** 🍱\n\n【一、三、四年級 (雙翼食品 - 葷食)】\n• 主食：紫米飯 (白米、紫米)\n• 主菜：雪菜豆腐 (豆腐、雪菜、香菇 煮)\n• 副菜：蒸蛋蛋.時蔬 蒸\n• 蔬菜：砂鍋粉絲 (冬粉、白菜 煮) 【履歷 (青菜)】\n• 湯品：巧達濃湯 (洋芋、南瓜)\n• 附餐：豆 (奶)\n\n【二、五、六年級 (久翔食品 - 葷食)】\n• 主食：紫米飯 (白米、紫米)\n• 主菜：醬蒸豆包 (豆包、毛豆-蒸)\n• 副菜：海帶芽炒蛋 (雞蛋、洋蔥、海帶芽-炒)\n• 蔬菜：彩椒花椰菜 (花椰菜、彩椒-炒) 【有機 (蔬菜)】\n• 湯品：南瓜濃湯 (南瓜、紅蘿蔔)\n• 附餐：豆奶\n\n【二、五、六年級 (久翔食品 - 素食)】\n• 主食：香菇油飯 (白米、糯米、麵輪、香菇)\n• 主菜：薑汁凍豆腐 (凍豆腐、金針菇-煮)\n• 副菜一：銀耳南瓜 (南瓜、白木耳-煮)\n• 副菜二：田園高麗 (高麗菜、時蔬-煮)\n• 副菜三：素蒸餃X2 (素蒸餃(X2)-蒸)\n• 青菜：乾煸菜豆 (菜豆、時蔬-炒) 【有機蔬菜】\n• 湯品：素肉骨茶湯 (時蔬、紅蘿蔔、菇)\n• 附餐：豆奶\n`;
+  chatKnowledgeBase['六月2日'] = chatKnowledgeBase['6月2日'];
+  chatKnowledgeBase['6/2'] = chatKnowledgeBase['6月2日'];
+  chatKnowledgeBase['6月3日'] = `📅 **115年6月3日 (三) 學生午餐菜單** 🍱\n\n【一、三、四年級 (雙翼食品 - 葷食)】\n• 主食：胚芽飯 (白米、胚芽)\n• 主菜：花生豬腳 (豬肉、豬腳、花生 滷)\n• 副菜：玉米炒蛋 (玉米、蛋 炒)\n• 蔬菜：鐵板豆芽 (豆芽菜、韭菜、煮) 【履歷 (青菜)】\n• 湯品：海帶雞湯 (海帶、雞肉、雞骨架)\n\n【二、五、六年級 (久翔食品 - 葷食)】\n• 主食：白飯 (白米)\n• 主菜：焢肉排 (焢肉排(X1)-滷)\n• 副菜：玉米干丁 (玉米、豆干、毛豆-炒)\n• 蔬菜：滷海帶結 (海帶結、紅蘿蔔-滷) 【產銷 (履歷)】\n• 湯品：味噌蛋花湯 (雞蛋、柴魚、味噌)\n\n【二、五、六年級 (久翔食品 - 素食)】\n• 主食：白飯 (白米)\n• 主菜：彩繪香竹捲 (香竹捲、時蔬、紅椒-煮)\n• 副菜一：醬炒素肚 (素肚、榨菜、時蔬-炒)\n• 副菜二：清燉蘿蔔 (白蘿蔔、紅蘿蔔、時蔬-)\n• 副菜三：洛神花藕片 (煮 蓮藕、洛神花、白芝麻-煮)\n• 青菜：小瓜鮑菇 (小黃瓜、鮑菇、-煮) 【產銷履歷】\n• 湯品：黃豆芽湯 (黃豆芽、時蔬)\n`;
+  chatKnowledgeBase['六月3日'] = chatKnowledgeBase['6月3日'];
+  chatKnowledgeBase['6/3'] = chatKnowledgeBase['6月3日'];
+  chatKnowledgeBase['6月4日'] = `📅 **115年6月4日 (四) 學生午餐菜單** 🍱\n\n【一、三、四年級 (雙翼食品 - 葷食)】\n• 主食：櫻花蝦 (炒飯)\n• 主菜：雞排X1 (雞排X1 燒)\n• 副菜：薯餅X2 (薯餅X2 烤)\n• 蔬菜：木耳四季 (條豆、木耳 煮) 【履歷 (青菜)】\n• 湯品：糯米排骨湯 (洋芋、糯米、大骨)\n\n【二、五、六年級 (久翔食品 - 葷食)】\n• 主食：五穀飯 (白米、五穀米)\n• 主菜：安東燉雞 (雞肉、寬冬粉、馬鈴薯、芝麻-煮)\n• 副菜：高麗菜拌肉 (高麗菜、豬肉-炒)\n• 蔬菜：藥膳蘿蔔 (白蘿蔔、枸杞、肉骨茶-煮) 【產銷 (履歷)】\n• 湯品：關東煮湯 (油豆腐、玉米)\n\n【二、五、六年級 (久翔食品 - 素食)】\n• 主食：五穀飯 (白米、五穀米)\n• 主菜：玉米豆腐 (豆腐、玉米-煮)\n• 副菜一：糯米椒炒干片 (豆干、糯米椒-炒)\n• 副菜二：紅仁絲瓜 (絲瓜、紅蘿蔔-煮)\n• 副菜三：烤地瓜塊 (地瓜切塊-烤)\n• 青菜：薑絲紅鳳菜 (紅鳳菜-煮) 【產銷履歷】\n• 湯品：黃瓜鮮蔬湯 (大黃瓜、時蔬)\n`;
+  chatKnowledgeBase['六月4日'] = chatKnowledgeBase['6月4日'];
+  chatKnowledgeBase['6/4'] = chatKnowledgeBase['6月4日'];
+  chatKnowledgeBase['6月5日'] = `📅 **115年6月5日 (五) 學生午餐菜單** 🍱\n\n【一、三、四年級 (雙翼食品 - 葷食)】\n• 主食：燕麥飯 (白米、燕麥)\n• 主菜：★炸海鮮排X1 (海鮮排X1 炸)\n• 副菜：蘑菇薯塊燉雞 (洋芋、雞肉、菇 煮)\n• 蔬菜：脆炒海絲 (海帶絲、紅蘿蔔 炒) 【履歷 (青菜)】\n• 湯品：芹香蘿蔔湯 (蘿蔔、芹)\n\n【二、五、六年級 (久翔食品 - 葷食)】\n• 主食：海南雞絲飯 (白米、時蔬、雞肉)\n• 主菜：柚子豬排 (豬排(X1)-烤)\n• 副菜：海苔章魚燒X2 (章魚燒(X2)、海苔-烤)\n• 蔬菜：菇炒筍丁 (筍、香菇、毛豆-炒) 【產銷 (履歷)】\n• 湯品：酸辣湯 (豆腐、雞蛋、金針菇)\n\n【二、五、六年級 (久翔食品 - 素食)】\n• 主食：白飯 (白米)\n• 主菜：蜜香黑豆干 (黑豆干、鮑菇、芝麻-煮)\n• 副菜一：素佛跳牆 (白菜、筍、芋頭、素排骨酥-煮)\n• 副菜二：清炒花椰 (花椰菜、時蔬-炒)\n• 副菜三：枸杞冬瓜 (冬瓜、枸杞-煮)\n• 青菜：黑椒洋芋 (洋芋、時蔬、素絞肉、黑胡椒-煮) 【產銷履歷】\n• 湯品：青菜豆腐湯 (豆腐、青菜)\n`;
+  chatKnowledgeBase['六月5日'] = chatKnowledgeBase['6月5日'];
+  chatKnowledgeBase['6/5'] = chatKnowledgeBase['6月5日'];
+  chatKnowledgeBase['6月8日'] = `📅 **115年6月8日 (一) 學生午餐菜單** 🍱\n\n【一、三、四年級 (雙翼食品 - 葷食)】\n• 主食：白飯 (白米)\n• 主菜：蜜醬雞翅X1 (雞翅X1 燒)\n• 副菜：烤 肉 醬 (甜 不 辣)\n• 蔬菜：小瓜金玉 (玉米、小黃瓜 煮) 【履歷 (青菜)】\n• 湯品：竹筍大骨湯 (竹筍、大骨)\n\n【二、五、六年級 (久翔食品 - 葷食)】\n• 主食：蕎麥飯 (白米、蕎麥)\n• 主菜：韓式泡菜雞丁 (雞肉、大白菜、泡菜-煮)\n• 副菜：湯包X2 (湯包(X2)-蒸)\n• 蔬菜：海帶干絲 (海帶、豆干-煮) 【產銷 (履歷)】\n• 湯品：蒲瓜排骨湯 (蒲瓜、湯排)\n\n【二、五、六年級 (久翔食品 - 素食)】\n• 主食：蕎麥飯 (白米、蕎麥)\n• 主菜：醬蒸嫩油腐X2 (嫩油豆腐(X2)、菇-蒸)\n• 副菜一：素鴿鬆 (豆薯、素火腿、素香鬆、素絞肉、冬粉-炒)\n• 副菜二：杏片高麗菜 (高麗菜、紅蘿蔔、杏仁片-)\n• 副菜三：蜜汁芋頭 (炒 芋頭-煮)\n• 青菜：清炒皇宮菜 (皇宮菜、時蔬-炒) 【產銷履歷】\n• 湯品：蘿蔔湯 (白蘿蔔、時蔬)\n`;
+  chatKnowledgeBase['六月8日'] = chatKnowledgeBase['6月8日'];
+  chatKnowledgeBase['6/8'] = chatKnowledgeBase['6月8日'];
+  chatKnowledgeBase['6月9日'] = `📅 **115年6月9日 (二) 學生午餐菜單** 🍱\n\n【一、三、四年級 (雙翼食品 - 葷食)】\n• 主食：糙米飯\n• 主菜：壽喜燒 (豬排X1)\n• 副菜：茶葉蛋X1\n• 蔬菜：炒甘藍菜 【有機 (青菜)】\n• 湯品：海芽蛋花湯\n• 附餐：果 (汁)\n\n【二、五、六年級 (久翔食品 - 葷食)】\n• 主食：白飯 (白米)\n• 主菜：咖哩豬排 (豬排(X1)、咖哩-燒)\n• 副菜：蒸蛋雞蛋-蒸\n• 蔬菜：鮮蔬高麗菜 (高麗菜、時蔬-炒) 【有機 (蔬菜)】\n• 湯品：青菜蛋花湯 (青菜、雞蛋)\n• 附餐：果汁\n\n【二、五、六年級 (久翔食品 - 素食)】\n• 主食：白飯 (白米)\n• 主菜：海帶干絲 (豆干絲、海帶絲-炒)\n• 副菜一：紅燒烤麩 (烤麩、筍、時蔬、蓮子-燒)\n• 副菜二：咖哩洋芋 (洋芋、紅蘿蔔、咖哩-)\n• 副菜三：什錦花椰 (煮 花椰菜、木耳、蒟蒻-煮)\n• 青菜：炒大黃瓜 (大黃瓜、菇-炒) 【產銷履歷】\n• 湯品：白菜鮮蔬湯 (白菜、時蔬)\n• 附餐：果汁\n`;
+  chatKnowledgeBase['六月9日'] = chatKnowledgeBase['6月9日'];
+  chatKnowledgeBase['6/9'] = chatKnowledgeBase['6月9日'];
+  chatKnowledgeBase['6月10日'] = `📅 **115年6月10日 (三) 學生午餐菜單** 🍱\n\n【一、三、四年級 (雙翼食品 - 葷食)】\n• 主食：白飯 (白米)\n• 主菜：香菇冬瓜雞 (雞肉、冬瓜、菇 煮)\n• 副菜：回鍋肉 (豆干、豬肉、時蔬 炒)\n• 蔬菜：奶香白菜 (白菜、南瓜 煮) 【履歷 (青菜)】\n• 湯品：玉米濃湯 (玉米、洋芋)\n\n【二、五、六年級 (久翔食品 - 葷食)】\n• 主食：薏仁飯 (白米、洋薏仁)\n• 主菜：義式檸檬雞 (雞肉、鮑菇、檸檬汁、綜合香料-煮)\n• 副菜：烤豬肉條 (豬肉切條-烤)\n• 蔬菜：芝麻菜豆 (菜豆、紅蘿蔔、芝麻-炒) 【產銷 (履歷)】\n• 湯品：玉米濃湯 (玉米、雞蛋)\n\n【二、五、六年級 (久翔食品 - 素食)】\n• 主食：薏仁飯 (白米、洋薏仁)\n• 主菜：栗香麵輪 (麵輪、白蘿蔔、栗子-滷)\n• 副菜一：醬爆豆雞片 (豆雞片、菇-炒)\n• 副菜二：蜜糖地瓜 (地瓜、芝麻-炒)\n• 副菜三：蠔油燜苦瓜 (苦瓜、時蔬-燜)\n• 青菜：清炒豆苗 (豆苗、時蔬-炒) 【產銷履歷】\n• 湯品：針菇海芽湯 (金針菇、海芽)\n`;
+  chatKnowledgeBase['六月10日'] = chatKnowledgeBase['6月10日'];
+  chatKnowledgeBase['6/10'] = chatKnowledgeBase['6月10日'];
+  chatKnowledgeBase['10日'] = chatKnowledgeBase['6月10日'];
+  chatKnowledgeBase['6月11日'] = `📅 **115年6月11日 (四) 學生午餐菜單** 🍱\n\n【一、三、四年級 (雙翼食品 - 葷食)】\n• 主食：五穀飯 (白米、五穀米)\n• 主菜：叻沙肉排X1 (豬排X1 燒)\n• 副菜：番茄紅燒雞 (蘿蔔、雞肉、番茄 煮)\n• 蔬菜：鮮蔬蒲瓜 (蒲瓜、木耳 煮) 【履歷 (青菜)】\n• 湯品：柴魚味噌湯 (洋蔥、玉米、腐皮)\n\n【二、五、六年級 (久翔食品 - 葷食)】\n• 主食：雞絲炒飯 (白米、時蔬、雞肉)\n• 主菜：★炸魚排 (魚排(X1)-炸)\n• 副菜：海山醬肉圓X1 (肉圓(X1)、海山醬-蒸)\n• 蔬菜：紅片炒筍 (筍、紅蘿蔔-炒) 【產銷 (履歷)】\n• 湯品：蘿蔔雞湯 (白蘿蔔、雞骨)\n\n【二、五、六年級 (久翔食品 - 素食)】\n• 主食：古早味米苔目 (米苔目、素絞肉、時蔬)\n• 主菜：芹香豆包 (豆包、芹菜-炒)\n• 副菜一：糯米椒炒肉絲 (糯米椒、素肉絲、彩椒-炒)\n• 副菜二：燴雙菇 (大白菜、鴻喜菇、菇-)\n• 副菜三：芋泥包X1 (燴 芋泥包(X1)-蒸)\n• 青菜：枸杞地瓜葉 (地瓜葉、枸杞-煮) 【產銷履歷】\n• 湯品：羅宋湯 (洋芋、番茄)\n`;
+  chatKnowledgeBase['六月11日'] = chatKnowledgeBase['6月11日'];
+  chatKnowledgeBase['6/11'] = chatKnowledgeBase['6月11日'];
+  chatKnowledgeBase['11日'] = chatKnowledgeBase['6月11日'];
+  chatKnowledgeBase['6月12日'] = `📅 **115年6月12日 (五) 學生午餐菜單** 🍱\n\n【一、三、四年級 (雙翼食品 - 葷食)】\n• 主食：白飯 (白米)\n• 主菜：梅汁糖醋雞 (雞肉、彩椒 炒)\n• 副菜：金湯酸菜豬 (凍豆腐、白菜、豬肉、酸菜 煮)\n• 蔬菜：雙色花椰 (花椰菜 炒) 【履歷 (青菜)】\n• 湯品：黃瓜大骨湯 (黃瓜、大骨)\n\n【二、五、六年級 (久翔食品 - 葷食)】\n• 主食：小米飯 (白米、小米)\n• 主菜：避風塘雞排 (雞排(X1)、蒜、蔥-燒)\n• 副菜：麻婆豆腐 (豆腐、豬肉、毛豆-煮)\n• 蔬菜：鮮蔬白菜 (大白菜、木耳-炒) 【產銷 (履歷)】\n• 湯品：筍香針菇湯 (金針菇、筍)\n\n【二、五、六年級 (久翔食品 - 素食)】\n• 主食：小米飯 (白米、小米)\n• 主菜：酸菜素肚 (素肚、酸菜-炒)\n• 副菜一：蘑菇醬豆腐 (豆腐、玉米、紅蘿蔔、菇-煮)\n• 副菜二：南瓜肉醬 (南瓜、素絞肉-燒)\n• 副菜三：脆炒竹筍 (筍、時蔬-炒)\n• 青菜：炒青木瓜 (青木瓜、木耳-炒) 【產銷履歷】\n• 湯品：脆薯鮮菇湯 (豆薯、菇)\n`;
+  chatKnowledgeBase['六月12日'] = chatKnowledgeBase['6月12日'];
+  chatKnowledgeBase['6/12'] = chatKnowledgeBase['6月12日'];
+  chatKnowledgeBase['12日'] = chatKnowledgeBase['6月12日'];
+  chatKnowledgeBase['6月15日'] = `📅 **115年6月15日 (一) 學生午餐菜單** 🍱\n\n【一、三、四年級 (雙翼食品 - 葷食)】\n• 主食：白醬義大 (利麵)\n• 主菜：★炸椒鹽豬排X1 (豬排X1 炸)\n• 副菜：地瓜椪X2 (地瓜椪X2 烤)\n• 蔬菜：四季炒雞 (條豆、雞絞肉、菇 炒) 【履歷 (青菜)】\n• 湯品：麻油雞湯 (高麗菜、雞肉、雞骨架)\n\n【二、五、六年級 (久翔食品 - 葷食)】\n• 主食：白飯 (白米)\n• 主菜：滷豬腳 (豬肉、豬腳、筍-滷)\n• 副菜：白菜拌雞 (大白菜、雞肉、菇-炒)\n• 蔬菜：蒜味海帶根 (海帶根、紅蘿蔔-炒) 【產銷 (履歷)】\n• 湯品：絲瓜湯 (絲瓜)\n\n【二、五、六年級 (久翔食品 - 素食)】\n• 主食：雙菇紫米炒飯 (白米、紫米、鴻喜菇、菇、紅蘿蔔)\n• 主菜：小瓜素雞丁 (素雞丁、小黃瓜-燒)\n• 副菜一：★椒鹽豆腸捲 (海苔、豆腸-炸)\n• 副菜二：脆炒豆薯丁 (豆薯、毛豆仁-炒)\n• 副菜三：豆簽絲瓜 (絲瓜、豆簽-煮)\n• 青菜：塔香茄子 (茄子、九層塔-煮) 【產銷履歷】\n• 湯品：味噌油腐湯 (油豆腐、海帶芽)\n`;
+  chatKnowledgeBase['六月15日'] = chatKnowledgeBase['6月15日'];
+  chatKnowledgeBase['6/15'] = chatKnowledgeBase['6月15日'];
+  chatKnowledgeBase['15日'] = chatKnowledgeBase['6月15日'];
+  chatKnowledgeBase['6月16日'] = `📅 **115年6月16日 (二) 學生午餐菜單** 🍱\n\n【一、三、四年級 (雙翼食品 - 葷食)】\n• 主食：白飯\n• 主菜：烤脆皮雞排X1\n• 副菜：菜脯蛋\n• 蔬菜：哨子嫩腐 【有機 (青菜)】\n• 湯品：肉骨茶湯\n• 附餐：豆 (奶)\n\n【二、五、六年級 (久翔食品 - 葷食)】\n• 主食：蔥油拌麵 (麵、時蔬、豬肉)\n• 主菜：雞肉捲 (雞肉捲(X1)-烤)\n• 副菜：蒸餃X2 (蒸餃(X2)-蒸)\n• 蔬菜：木須蒲瓜 (蒲瓜、木耳-炒) 【有機 (蔬菜)】\n• 湯品：味噌豆腐湯 (豆腐、海帶芽、味噌)\n• 附餐：豆奶\n\n【二、五、六年級 (久翔食品 - 素食)】\n• 主食：燕麥飯 (白米、燕麥)\n• 主菜：五更豆腐 (凍豆腐、時蔬、酸菜-煮)\n• 副菜一：白菜燒麵筋 (大白菜、時蔬、麵筋-燒)\n• 副菜二：清炒筍絲 (筍、時蔬-炒)\n• 副菜三：糖粉地瓜塊 (地瓜切塊-烤)\n• 青菜：針菇芥藍 (芥藍菜、針菇-煮) 【標章蔬菜】\n• 湯品：蒲瓜鮮蔬湯 (蒲瓜、時蔬)\n• 附餐：豆奶\n`;
+  chatKnowledgeBase['六月16日'] = chatKnowledgeBase['6月16日'];
+  chatKnowledgeBase['6/16'] = chatKnowledgeBase['6月16日'];
+  chatKnowledgeBase['16日'] = chatKnowledgeBase['6月16日'];
+  chatKnowledgeBase['6月17日'] = `📅 **115年6月17日 (三) 學生午餐菜單** 🍱\n\n【一、三、四年級 (雙翼食品 - 葷食)】\n• 主食：燕麥飯 (白米、燕麥)\n• 主菜：竹筍燒肉 (豬肉、竹筍 燒)\n• 副菜：白菜燒雞 (白菜、雞肉 燒)\n• 蔬菜：炒花椰菜 (花椰菜、紅蘿蔔 炒) 【履歷 (青菜)】\n• 湯品：苳菜大瓜湯 (黃瓜、苳菜)\n\n【二、五、六年級 (久翔食品 - 葷食)】\n• 主食：白飯 (白米)\n• 主菜：紅糟豬排 (豬排(X1)、紅糟-烤)\n• 副菜：黑豆干滷味 (黑豆干、香菇、紅蘿蔔-滷)\n• 蔬菜：枸杞冬瓜 (冬瓜、枸杞-煮) 【產銷 (履歷)】\n• 湯品：竹筍雞湯 (筍、雞骨)\n\n【二、五、六年級 (久翔食品 - 素食)】\n• 主食：白飯 (白米)\n• 主菜：菇炒麵腸 (麵腸、菇-炒)\n• 副菜一：客家小炒 (豆干、芹菜、紅椒-炒)\n• 副菜二：木須黃瓜 (大黃瓜、木耳-煮)\n• 副菜三：沙茶玉米段X1 (玉米段(X1)、素沙茶-煮)\n• 青菜：榨菜銀芽 (豆芽菜、榨菜-煮) 【產銷履歷】\n• 湯品：竹筍湯 (筍)\n`;
+  chatKnowledgeBase['六月17日'] = chatKnowledgeBase['6月17日'];
+  chatKnowledgeBase['6/17'] = chatKnowledgeBase['6月17日'];
+  chatKnowledgeBase['17日'] = chatKnowledgeBase['6月17日'];
+  chatKnowledgeBase['6月18日'] = `📅 **115年6月18日 (四) 學生午餐菜單** 🍱\n\n【一、三、四年級 (雙翼食品 - 葷食)】\n• 主食：白飯 (白米)\n• 主菜：沙茶翅小腿X2 (翅小腿X2 炒)\n• 副菜：奶 黃 醬 (肉 丸X1)\n• 蔬菜：紅蔥高麗 (高麗菜、紅蔥 煮) 【履歷 (青菜)】\n• 湯品：榨菜肉絲湯 (榨菜、豬肉)\n\n【二、五、六年級 (久翔食品 - 葷食)】\n• 主食：紫米飯 (白米、紫米)\n• 主菜：蠔油雞排 (雞排(X1)-滷)\n• 副菜：蘿蔔肉羹 (白蘿蔔、肉羹-煮)\n• 蔬菜：炒豆芽菜 (豆芽菜、時蔬-炒) 【產銷 (履歷)】\n• 湯品：大滷湯 (時蔬、木耳、紅蘿蔔)\n\n【二、五、六年級 (久翔食品 - 素食)】\n• 主食：紫米飯 (白米、紫米)\n• 主菜：南瓜豆腐煲 (豆腐、南瓜、毛豆仁-煮)\n• 副菜一：八寶肉醬 (豆干、紅蘿蔔、素絞肉、時蔬-煮)\n• 副菜二：螞蟻上樹 (冬粉、高麗菜、時蔬、芝麻-)\n• 副菜三：蓮子山藥 (炒 山藥、蓮子-煮)\n• 青菜：蠔油秋葵 (秋葵、素蠔油-煮) 【產銷履歷】\n• 湯品：冬瓜薏仁湯 (冬瓜、洋薏仁)\n`;
+  chatKnowledgeBase['六月18日'] = chatKnowledgeBase['6月18日'];
+  chatKnowledgeBase['6/18'] = chatKnowledgeBase['6月18日'];
+  chatKnowledgeBase['18日'] = chatKnowledgeBase['6月18日'];
+  chatKnowledgeBase['6月19日'] = `📅 **115年6月19日 (五) 學生午餐菜單** 🍱\n\n今天端午節放假，學校不供餐喔！祝大家端午節安康！🎋`;
+  chatKnowledgeBase['六月19日'] = chatKnowledgeBase['6月19日'];
+  chatKnowledgeBase['6/19'] = chatKnowledgeBase['6月19日'];
+  chatKnowledgeBase['19日'] = chatKnowledgeBase['6月19日'];
+  chatKnowledgeBase['6月22日'] = `📅 **115年6月22日 (一) 學生午餐菜單** 🍱\n\n【一、三、四年級 (雙翼食品 - 葷食)】\n• 主食：白飯 (白米)\n• 主菜：塔香肉排X1 (豬排X1 燒)\n• 副菜：番茄炒蛋 (番茄、蛋 炒)\n• 蔬菜：薑絲海根 (海帶根 煮) 【履歷 (青菜)】\n• 湯品：關東煮湯 (蘿蔔、玉米、菇)\n\n【二、五、六年級 (久翔食品 - 葷食)】\n• 主食：客家粄條 (粄條、時蔬、豬肉)\n• 主菜：三杯雞翅 (雞翅(X1)-滷)\n• 副菜：海鮮捲X2 (海鮮捲(X2)-烤)\n• 蔬菜：炒高麗菜 (高麗菜、紅蘿蔔-炒) 【產銷 (履歷)】\n• 湯品：肉骨茶湯 (時蔬、紅棗、湯排)\n\n【二、五、六年級 (久翔食品 - 素食)】\n• 主食：胚芽飯 (白米、胚芽米)\n• 主菜：鮑菇麵輪 (麵輪、鮑菇、時蔬-燒)\n• 副菜一：麻婆豆腐 (豆腐、素絞肉-煮)\n• 副菜二：栗子燒白菜 (大白菜、栗子、菇、-煮)\n• 副菜三：匈牙利黃芽 (黃豆芽、時蔬、匈牙利紅椒粉-炒)\n• 青菜：蔬炒櫛瓜 (櫛瓜、時蔬-炒) 【產銷履歷】\n• 湯品：番茄鮮蔬湯 (時蔬、番茄)\n`;
+  chatKnowledgeBase['六月22日'] = chatKnowledgeBase['6月22日'];
+  chatKnowledgeBase['6/22'] = chatKnowledgeBase['6月22日'];
+  chatKnowledgeBase['22日'] = chatKnowledgeBase['6月22日'];
+  chatKnowledgeBase['6月23日'] = `📅 **115年6月23日 (二) 學生午餐菜單** 🍱\n\n【一、三、四年級 (雙翼食品 - 葷食)】\n• 主食：甜醬油 (炒麵)\n• 主菜：燒雞翅X1 (雞翅X1 燒)\n• 副菜：★炸魚條X2 (魚條X2 炸)\n• 蔬菜：香菇豆芽 (豆芽、香菇 煮) 【有機 (青菜)】\n• 湯品：味噌湯 (豆腐、味噌)\n• 附餐：果 (汁)\n\n【二、五、六年級 (久翔食品 - 葷食)】\n• 主食：胚芽飯 (白米、胚芽米)\n• 主菜：宮保魚排 (魚排(X1)-燒)\n• 副菜：沙茶凍豆腐 (凍豆腐、金針菇、沙茶-煮)\n• 蔬菜：打拋粉絲 (冬粉、時蔬、豬肉、番茄、魚露-煮) 【有機 (蔬菜)】\n• 湯品：黃瓜雞湯 (大黃瓜、雞骨)\n• 附餐：果汁/ (回饋)\n\n【二、五、六年級 (久翔食品 - 素食)】\n• 主食：香椿義大利麵 (義大利麵、玉米、時蔬、香椿醬)\n• 主菜：客家鑲豆腐X1 (油豆腐(X1)、芋頭、菇-蒸)\n• 副菜一：醬爆麵腸 (麵腸、花椰菜、時蔬-炒)\n• 副菜二：鮮菇地瓜葉 (地瓜葉、菇-炒)\n• 副菜三：脆炒鮮筍 (筍、紅蘿蔔、香菇-炒)\n• 青菜：奶皇包X1 (奶皇包(X1)-蒸) 【標章蔬菜】\n• 湯品：巧達濃湯 (洋芋、紅蘿蔔)\n• 附餐：果汁/ (回饋)\n`;
+  chatKnowledgeBase['六月23日'] = chatKnowledgeBase['6月23日'];
+  chatKnowledgeBase['6/23'] = chatKnowledgeBase['6月23日'];
+  chatKnowledgeBase['23日'] = chatKnowledgeBase['6月23日'];
+  chatKnowledgeBase['6月24日'] = `📅 **115年6月24日 (三) 學生午餐菜單** 🍱\n\n【一、三、四年級 (雙翼食品 - 葷食)】\n• 主食：白飯 (白米)\n• 主菜：紅燒小排 (豬肉、小排、蘿蔔 燒)\n• 副菜：蒜香玉米雞 (玉米、雞絞肉、紅蘿蔔 煮)\n• 蔬菜：翠炒甘藍 (高麗菜、紅蘿蔔 炒) 【履歷 (青菜)】\n• 湯品：針菇鮮瓜湯 (冬瓜、針菇)\n\n【二、五、六年級 (久翔食品 - 葷食)】\n• 主食：糙米飯 (白米、糙米)\n• 主菜：叻沙雞丁 (雞肉、地瓜、椰奶、叻沙-炒)\n• 副菜：紅燒獅子頭X1 (獅子頭(X1)、時蔬-煮)\n• 蔬菜：薑絲海茸 (海茸、筍-煮) 【產銷 (履歷)】\n• 湯品：蘿蔔排骨湯 (白蘿蔔、湯排)\n\n【二、五、六年級 (久翔食品 - 素食)】\n• 主食：糙米飯 (白米、糙米)\n• 主菜：茄汁豆包 (豆包、番茄、毛豆仁-蒸)\n• 副菜一：小瓜炒素肚 (素肚、小黃瓜-炒)\n• 副菜二：腰果炒玉米 (玉米、時蔬、腰果-炒)\n• 副菜三：炒結頭菜 (結頭菜、菇-炒)\n• 青菜：梅醬苦瓜 (苦瓜、梅醬-煮) 【產銷履歷】\n• 湯品：榨菜肉絲湯 (素肉絲、榨菜)\n`;
+  chatKnowledgeBase['六月24日'] = chatKnowledgeBase['6月24日'];
+  chatKnowledgeBase['6/24'] = chatKnowledgeBase['6月24日'];
+  chatKnowledgeBase['24日'] = chatKnowledgeBase['6月24日'];
+  chatKnowledgeBase['6月25日'] = `📅 **115年6月25日 (四) 學生午餐菜單** 🍱\n\n【一、三、四年級 (雙翼食品 - 葷食)】\n• 主食：胚芽飯 (白米、胚芽)\n• 主菜：烤雞肉捲X1 (雞肉捲X1 烤)\n• 副菜：味噌豚肉煲 (蘿蔔、豬肉、玉米 煮)\n• 蔬菜：脆炒三絲 (豆芽、韭菜、紅蘿蔔 炒) 【履歷 (青菜)】\n• 湯品：酸辣湯 (筍、豆腐、木耳、紅蘿蔔)\n\n【二、五、六年級 (久翔食品 - 葷食)】\n• 主食：白飯 (白米)\n• 主菜：卡菲燉肉 (豬肉、洋蔥、卡菲醬-煮)\n• 副菜：蜜汁小方干 (豆干、芝麻-炒)\n• 蔬菜：白醬南瓜 (南瓜、鮑菇、白醬-煮) 【產銷 (履歷)】\n• 湯品：巧達濃湯 (馬鈴薯、雞蛋)\n\n【二、五、六年級 (久翔食品 - 素食)】\n• 主食：白飯 (白米)\n• 主菜：白玉關東煮 (油豆腐、白蘿蔔、海結、蒟蒻-煮)\n• 副菜一：沙嗲豆雞片 (豆雞片、小黃瓜、素沙嗲-煮)\n• 副菜二：奶香南瓜 (南瓜、洋芋-煮)\n• 副菜三：鮮菇扁蒲 (蒲瓜、菇-煮)\n• 青菜：鮮蔬燴雙耳 (白木耳、黑木耳、紅蘿蔔-煮) 【產銷履歷】\n• 湯品：結頭菜湯 (結頭菜、薑)\n`;
+  chatKnowledgeBase['六月25日'] = chatKnowledgeBase['6月25日'];
+  chatKnowledgeBase['6/25'] = chatKnowledgeBase['6月25日'];
+  chatKnowledgeBase['25日'] = chatKnowledgeBase['6月25日'];
+  chatKnowledgeBase['6月26日'] = `📅 **115年6月26日 (五) 學生午餐菜單** 🍱\n\n【一、三、四年級 (雙翼食品 - 葷食)】\n• 主食：白飯 (白米)\n• 主菜：咖哩豬 (豬肉、洋芋 煮)\n• 副菜：烤雞 堡 排X1 (雞堡排X1 烤)\n• 蔬菜：蜜汁豆干 (豆干、芝麻 炒) 【履歷 (青菜)】\n• 湯品：南瓜大骨湯 (南瓜、大骨)\n\n【二、五、六年級 (久翔食品 - 葷食)】\n• 主食：紅藜小米飯 (白米、小米、紅藜麥)\n• 主菜：紐澳良翅小腿 (翅小腿(X2)-烤)\n• 副菜：肉燥玉米 (玉米、豬肉、毛豆-煮)\n• 蔬菜：雙色花椰菜 (花椰菜、菇-炒) 【產銷 (履歷)】\n• 湯品：針菇海芽湯 (金針菇、海帶芽)\n\n【二、五、六年級 (久翔食品 - 素食)】\n• 主食：紅藜小米飯 (白米、小米、紅藜麥)\n• 主菜：醬燒百頁 (百頁、時蔬-燒)\n• 副菜一：芝香菜豆 (菜豆、豆包絲、白芝麻-炒)\n• 副菜二：清炒寬粉 (寬粉、時蔬-炒)\n• 副菜三：薑黃蓮藕圈 (蓮藕、薑黃-煮)\n• 青菜：炒高麗菜 (高麗菜、時蔬-炒) 【產銷履歷】\n• 湯品：味噌豆腐湯 (豆腐、海帶芽、味噌)\n`;
+  chatKnowledgeBase['六月26日'] = chatKnowledgeBase['6月26日'];
+  chatKnowledgeBase['6/26'] = chatKnowledgeBase['6月26日'];
+  chatKnowledgeBase['26日'] = chatKnowledgeBase['6月26日'];
+  chatKnowledgeBase['6月29日'] = `📅 **115年6月29日 (一) 學生午餐菜單** 🍱\n\n【一、三、四年級 (雙翼食品 - 葷食)】\n• 主食：雜糧飯 (白米、雜糧米)\n• 主菜：韓式泡菜魚 (魚肉、泡菜 煮)\n• 副菜：蒸蛋蛋.時蔬 蒸\n• 蔬菜：滷味拼盤 (豆製品、時蔬、丸子 煮) 【履歷 (青菜)】\n• 湯品：薑絲海芽湯 (海芽)\n\n【二、五、六年級 (久翔食品 - 葷食)】\n• 主食：白飯 (白米)\n• 主菜：味噌豬肉 (豬肉、高麗菜、味噌-煮)\n• 副菜：竹筍炒雞 (筍、雞肉-炒)\n• 蔬菜：柴魚蘿蔔 (白蘿蔔、香菇、柴魚-煮) 【產銷 (履歷)】\n• 湯品：山藥四神湯 (山藥、洋薏仁、湯排)\n\n【二、五、六年級 (久翔食品 - 素食)】\n• 主食：白飯 (白米)\n• 主菜：四喜烤麩 (烤麩、木耳、黃椒、香菇-煮)\n• 副菜一：紅娘豆包 (豆包絲、紅蘿蔔-煮)\n• 副菜二：清炒絲瓜 (絲瓜、木耳-炒)\n• 副菜三：蠔油茄子 (茄子、素蠔油-蒸)\n• 青菜：鮮菇芥藍 (芥藍菜、針菇-煮) 【產銷履歷】\n• 湯品：海芽黃芽湯 (黃豆芽、海帶芽)\n`;
+  chatKnowledgeBase['六月29日'] = chatKnowledgeBase['6月29日'];
+  chatKnowledgeBase['6/29'] = chatKnowledgeBase['6月29日'];
+  chatKnowledgeBase['29日'] = chatKnowledgeBase['6月29日'];
+  chatKnowledgeBase['午餐'] = `🍱 **光復國小學生午餐供餐與服務資訊指引** ✿
+
+本校學生午餐依年級由不同的優良食品廠商進行供餐，資訊如下：
+1. **供餐廠商劃分**：
+   - **一、三、四年級**：由 **雙翼食品** 供餐。
+   - **二、五、六年級**：由 **久翔食品** 供餐 (提供葷食與素食)。
+2. **官方菜單與資訊連結** (點擊直接下載/瀏覽)：
+   - [115年6月菜單 (久翔葷食) 📄](https://drive.google.com/file/d/1HEs1si0l1A8EhCAefxASJ0CSvIxAomRQ/view?usp=drive_link)
+   - [115年6月久翔菜單 (素食) 📄](https://drive.google.com/file/d/1JnWzOiDCw8A35H9ZJLOL4Phz2BjniYLo/view?usp=drive_link)
+   - [115年6月菜單 (雙翼葷食) 📄](https://drive.google.com/file/d/1z4NUT5KFfJFy1wBNtr5q2oTj__QVMrkt/view?usp=drive_link)
+   - [校園食材登錄平臺 🌐](https://fatraceschool.k12ea.gov.tw/frontend/search.html)
+3. **午餐請假與退費辦法**：
+   - 學生因故（如公假、病假、事假等）未於學校用餐，可辦理退費。
+   - [午餐退費辦法及相關申請表件資料夾 📁](https://drive.google.com/drive/folders/1023CBApCC9Cac2kRINE42L9AqRC89Nfa?usp=drive_link)
+4. **聯絡窗口**：若有任何午餐相關疑问，歡迎於上班時間聯絡學務處午餐秘書分機 **137**！📞`;
+  chatKnowledgeBase['菜單'] = chatKnowledgeBase['午餐'];
+  chatKnowledgeBase['菜色'] = chatKnowledgeBase['午餐'];
+  chatKnowledgeBase['吃什麼'] = chatKnowledgeBase['午餐'];
+  chatKnowledgeBase['供餐'] = chatKnowledgeBase['午餐'];
+  chatKnowledgeBase['退費'] = chatKnowledgeBase['午餐'];
+
   function getAIResponse(userMessage) {
-    let responseText = "哈囉哈囉！小光收到你的訊息啦！✨\n關於新北市中和區光復國小，您可以輸入關鍵字（例如：「請假」、「冷氣」、「最新消息」、「認識學校」、「行政處室」或「附幼」），或者點選底下的快速按鈕！小光會用最熱情活潑的語氣為你解答喔！✿";
+    let responseText = "抱歉，小光的資料庫中目前沒有此問題的解答。😢\n\n建議您於上班時間（週一至週五 08:00 - 16:00）致電本校總機電話：**(02) 3234-8654**，我們將有專人為您解答與服務喔！✿";
     
-    for (const key in chatKnowledgeBase) {
+    // Sort keys by length descending to avoid short key matching long key prefixes (e.g. "6/2" matching "6/22")
+    const sortedKeys = Object.keys(chatKnowledgeBase).sort((a, b) => b.length - a.length);
+    for (const key of sortedKeys) {
       if (userMessage.includes(key)) {
         responseText = chatKnowledgeBase[key];
         break;
@@ -529,6 +738,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!chatInputBox) return;
     const text = chatInputBox.value.trim();
     if (!text) return;
+
+    if (chatChipsContainer) {
+      chatChipsContainer.style.display = 'none';
+    }
 
     appendMessage('sent', text);
     chatInputBox.value = '';
@@ -577,6 +790,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // Handle Quick Reply Chips
   chatChips.forEach(chip => {
     chip.addEventListener('click', () => {
+      if (chatChipsContainer) {
+        chatChipsContainer.style.display = 'none';
+      }
       const questionText = chip.getAttribute('data-question');
       appendMessage('sent', questionText);
 
