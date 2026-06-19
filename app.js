@@ -385,6 +385,23 @@ document.addEventListener('DOMContentLoaded', () => {
    - 學校大門旁即為埔墘公園，設有地下停車場，周邊亦有路邊機車停車格，方便您停車！🅿️
 4. 🚲 **YouBike 租借**：
    - 學校前方「埔墘公園」旁即設有 YouBike 站點，方便您騎乘往返鄰近捷運站。`,
+    '鮮奶': `🍼 **新北鮮奶幸福週「幸福營養再+1」免費領取指南！** ✨
+
+新北市政府自 **115 年 2 月 23 日起**實施此項貼心政策，讓幼學童週週都能免費補充營養：
+
+1. 🎁 **領取資格與憑證**：
+   - 👶 **2 歲至學齡前幼兒**：憑「**新北幸福卡**」。
+   - 🎒 **國小部學童**：憑「**新北兒童卡**」。
+2. 🥛 **免費兌換內容**：
+   - 每週可憑卡免費兌換 **1 瓶鮮奶** 或 **豆漿**。
+3. 💳 **兒童卡申辦與補發管道**：
+   - **首次發放**：國小部學童於小一新生入學後，學校均會統一發放「新北兒童卡」。
+   - **補發或新辦**：若因卡片遺失、毀損，或從外縣市轉學過來而沒有卡片：
+     - 請家長（或書面委託代理人）攜帶學童與家長之**證明文件**，前往新北市**任一區公所**臨櫃辦理申辦。
+4. 🔗 **相關資源連結**：
+   - 🌐 [新北鮮奶幸福週官方網站](https://milk.ntpc.edu.tw/module/ticket-welcome-ntpc/module/ticket-welcome-ntpc/ap/home)
+   - 🎥 [新北兒童卡/幸福卡申請流程影片 🎬](https://www.youtube.com/watch?v=PPtBziJ7H6c)
+   - 🎥 [鮮奶幸福週－市長政策宣導影片 🎬](https://www.youtube.com/watch?v=i-h2J30gtPU)`,
     '請假': `🤒 **小光的學生請假超簡單指南！** ✨
 
 別擔心！小朋友身體不舒服或有事情，請按照下面步驟跟學校請假喔：
@@ -663,6 +680,24 @@ document.addEventListener('DOMContentLoaded', () => {
   chatKnowledgeBase['到光復'] = chatKnowledgeBase['交通'];
   chatKnowledgeBase['如何前往'] = chatKnowledgeBase['交通'];
   chatKnowledgeBase['前往'] = chatKnowledgeBase['交通'];
+
+  // 鮮奶領取相關別名
+  chatKnowledgeBase['領取鮮奶'] = chatKnowledgeBase['鮮奶'];
+  chatKnowledgeBase['兒童卡'] = chatKnowledgeBase['鮮奶'];
+  chatKnowledgeBase['幸福卡'] = chatKnowledgeBase['鮮奶'];
+  chatKnowledgeBase['鮮奶幸福週'] = chatKnowledgeBase['鮮奶'];
+  chatKnowledgeBase['領鮮奶'] = chatKnowledgeBase['鮮奶'];
+  chatKnowledgeBase['兌換鮮奶'] = chatKnowledgeBase['鮮奶'];
+  chatKnowledgeBase['兌換鮮奶或豆漿'] = chatKnowledgeBase['鮮奶'];
+  chatKnowledgeBase['新北兒童卡'] = chatKnowledgeBase['鮮奶'];
+  chatKnowledgeBase['新北幸福卡'] = chatKnowledgeBase['鮮奶'];
+  chatKnowledgeBase['幸福營養'] = chatKnowledgeBase['鮮奶'];
+  chatKnowledgeBase['免費鮮奶'] = chatKnowledgeBase['鮮奶'];
+  chatKnowledgeBase['領牛奶'] = chatKnowledgeBase['鮮奶'];
+  chatKnowledgeBase['免費牛奶'] = chatKnowledgeBase['鮮奶'];
+  chatKnowledgeBase['豆漿'] = chatKnowledgeBase['鮮奶'];
+  chatKnowledgeBase['領豆漿'] = chatKnowledgeBase['鮮奶'];
+  chatKnowledgeBase['牛奶'] = chatKnowledgeBase['鮮奶'];
 
 
   // === 學生午餐菜單資料庫 ===
