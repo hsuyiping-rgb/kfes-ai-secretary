@@ -915,4 +915,32 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   loadLatestNews();
 
+  // Mobile Sidebar Hamburger Menu Toggle
+  const btnHamburger = document.getElementById('btn-hamburger');
+  const sidebar = document.querySelector('.sidebar');
+  if (btnHamburger && sidebar) {
+    // Create backdrop element dynamically
+    const backdrop = document.createElement('div');
+    backdrop.className = 'sidebar-backdrop';
+    document.body.appendChild(backdrop);
+
+    btnHamburger.addEventListener('click', () => {
+      sidebar.classList.add('active');
+      backdrop.classList.add('active');
+    });
+
+    const closeSidebar = () => {
+      sidebar.classList.remove('active');
+      backdrop.classList.remove('active');
+    };
+
+    backdrop.addEventListener('click', closeSidebar);
+    
+    // Close sidebar when clicking any navigation link
+    const navLinks = sidebar.querySelectorAll('.nav-link');
+    navLinks.forEach(link => {
+      link.addEventListener('click', closeSidebar);
+    });
+  }
+
 });
