@@ -408,6 +408,27 @@ document.addEventListener('DOMContentLoaded', () => {
    - 🌐 [新北鮮奶幸福週官方網站](https://milk.ntpc.edu.tw/module/ticket-welcome-ntpc/module/ticket-welcome-ntpc/ap/home)
    - 🎥 [新北兒童卡/幸福卡申請流程影片 🎬](https://www.youtube.com/watch?v=PPtBziJ7H6c)
    - 🎥 [鮮奶幸福週－市長政策宣導影片 🎬](https://www.youtube.com/watch?v=i-h2J30gtPU)`,
+    '校長': `🎓 **認識我們親切的領航者——許以平校長（平平校長）！** ✨
+
+許以平校長現任本校（新北市中和區光復國小）校長（113學年度迄今），以教育為終身志業，深耕台灣國民小學教育超過三十年。
+
+1. 🎓 **學術與教育背景**：
+   - **最高學歷**：市立台北大學教育系博士（課程組）。
+   - **教育資歷**：擁有 **30 年以上**教育年資，歷任 **3 所學校**校長。
+   - **專業職務**：現任「學習共同體輔導團」、「STEAM 跨域輔導團」及「國小自然科輔導團」之諮詢委員與召集人。
+2. 💡 **核心辦學理念**：
+   - **核心精神**：「**差異，是學習最大的資源**」。
+   - **幸福課堂四密碼**：長期實踐佐藤學「學習共同體」理念，在校園中建立 **安心、信賴、互惠、共學** 的課堂氛圍。
+   - **辦學核心引擎**：倡導「**知－行－思**」以及「**傾聽、串聯、回歸**」的共學循環，點亮每個孩子的生命亮點。
+3. 📝 **教育書寫與社群分享**：
+   - 校長熱愛寫作與教學反思，透過兩個個人部落格與全台教育夥伴共同探索與分享：
+     - ✍️ [北極星的課堂風景部落格 ↗](https://siespolaris.blogspot.com/)：記錄觀課心得與教學反思。
+     - ✍️ [平平的教育發想部落格 ↗](https://siesyiping.blogspot.com/)：探討競賽文化、課堂變革與教育本質。
+     - 💬 [北極星工作坊 Facebook 社群 ↗](https://www.facebook.com/groups/1512655142349793/)。
+4. ✉️ **校長聯絡信箱**：
+   - 若您有任何教育想法或校務建議，歡迎來信交流：[hsuyiping@apps.ntpc.edu.tw](mailto:hsuyiping@apps.ntpc.edu.tw)
+5. 🔗 **個人官方網站**：
+   - 歡迎造訪 [平平校長的知－行－思官方網站 🌐](https://teaching-3b748.web.app/index.html) 深入了解校長的教育歷程與辦學故事！`,
     '請假': `🤒 **小光的學生請假超簡單指南！** ✨
 
 別擔心！小朋友身體不舒服或有事情，請按照下面步驟跟學校請假喔：
@@ -619,6 +640,13 @@ document.addEventListener('DOMContentLoaded', () => {
   chatKnowledgeBase['介紹'] = chatKnowledgeBase['認識'];
   chatKnowledgeBase['特色'] = chatKnowledgeBase['認識'];
   chatKnowledgeBase['校訓'] = chatKnowledgeBase['認識'];
+  chatKnowledgeBase['校長'] = chatKnowledgeBase['校長'];
+  chatKnowledgeBase['現任校長'] = chatKnowledgeBase['校長'];
+  chatKnowledgeBase['許以平'] = chatKnowledgeBase['校長'];
+  chatKnowledgeBase['平平校長'] = chatKnowledgeBase['校長'];
+  chatKnowledgeBase['校長是誰'] = chatKnowledgeBase['校長'];
+  chatKnowledgeBase['校長介紹'] = chatKnowledgeBase['校長'];
+  chatKnowledgeBase['認識校長'] = chatKnowledgeBase['校長'];
   chatKnowledgeBase['榮譽'] = chatKnowledgeBase['最新'];
   chatKnowledgeBase['新聞'] = chatKnowledgeBase['最新'];
   chatKnowledgeBase['消息'] = chatKnowledgeBase['最新'];
