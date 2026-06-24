@@ -1,9 +1,37 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-  // Initialize parent-focused statistics variables
-  let totalLeavesGenerated = 86;
-  let totalAdmissionsChecked = 142;
-  let totalChatResponses = 3250;
+  // ==========================================================================
+  // 0. 全校共用統計計數器（Firebase 後端，未設定時自動降級為 localStorage）
+  // ==========================================================================
+  // 預設基準值（DB 尚未有資料時的起算數字）
+  const STAT_DEFAULTS = {
+    leave: 86,
+    admission: 142,
+    chat: 3250
+  };
+  // localStorage 降級用的 key（Firebase 未設定時才會用到）
+  const STAT_KEYS = {
+    leave: 'kfes_stat_leave',
+    admission: 'kfes_stat_admission',
+    chat: 'kfes_stat_chat'
+  };
+  // app.js 內部欄位名 → Firebase / 顯示對應
+  const STAT_FIELDS = ['leave', 'admission', 'chat'];
+
+  let totalLeavesGenerated = STAT_DEFAULTS.leave;
+  let totalAdmissionsChecked = STAT_DEFAULTS.admission;
+  let totalChatResponses = STAT_DEFAULTS.chat;
+
+  // 偵測 Firebase 是否已成功初始化（index.html 載入 firebase-config.js 後設定）
+  const useFirebase = (typeof firebase !== 'undefined') &&
+                      firebase.apps && firebase.apps.length > 0;
+  const statsDbRef = useFirebase ? firebase.database().ref('stats') : null;
+
+  // localStorage 降級：讀取已累計的數字，沒有就用基準值
+  function loadStat(key, fallback) {
+    const saved = parseInt(localStorage.getItem(key), 10);
+    return Number.isNaN(saved) ? fallback : saved;
+  }
 
   // ==========================================================================
   // 1. Date & Time Initialization
@@ -56,11 +84,58 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Helper function to update stats on dashboard
-  function updateDashboardStats() {
-    document.getElementById('stat-leave-count').textContent = totalLeavesGenerated;
-    document.getElementById('stat-admission-count').textContent = totalAdmissionsChecked;
+  // 把目前的數字渲染到 dashboard（千分位顯示）
+  function renderDashboardStats() {
+    document.getElementById('stat-leave-count').textContent = totalLeavesGenerated.toLocaleString();
+    document.getElementById('stat-admission-count').textContent = totalAdmissionsChecked.toLocaleString();
     document.getElementById('stat-chat-count').textContent = totalChatResponses.toLocaleString();
+  }
+
+  // 將欄位值寫回對應的 JS 變數
+  function applyStatValue(field, value) {
+    if (field === 'leave') totalLeavesGenerated = value;
+    else if (field === 'admission') totalAdmissionsChecked = value;
+    else if (field === 'chat') totalChatResponses = value;
+  }
+
+  // 計數器 +1：Firebase 模式用伺服器端原子遞增；否則用 localStorage 累計
+  function incrementStat(field) {
+    if (useFirebase) {
+      // 伺服器端 atomic +1，跨裝置一致；UI 由下方 .on('value') 即時監聽更新
+      statsDbRef.child(field).set(firebase.database.ServerValue.increment(1));
+    } else {
+      const current = loadStat(STAT_KEYS[field], STAT_DEFAULTS[field]);
+      const next = current + 1;
+      localStorage.setItem(STAT_KEYS[field], next);
+      applyStatValue(field, next);
+      renderDashboardStats();
+    }
+  }
+
+  // 初始化統計來源
+  if (useFirebase) {
+    // 1) 種子：DB 尚無資料時，把基準值寫進去（transaction 確保不重複累加）
+    STAT_FIELDS.forEach(field => {
+      statsDbRef.child(field).transaction(cur => (cur === null ? STAT_DEFAULTS[field] : cur));
+    });
+    // 2) 即時監聽：任何裝置遞增都會自動反映到畫面
+    statsDbRef.on('value', (snapshot) => {
+      const data = snapshot.val() || {};
+      STAT_FIELDS.forEach(field => {
+        const v = (typeof data[field] === 'number') ? data[field] : STAT_DEFAULTS[field];
+        applyStatValue(field, v);
+      });
+      renderDashboardStats();
+    }, (err) => {
+      console.warn('[Stats] Firebase 讀取失敗，改用基準值顯示：', err);
+      renderDashboardStats();
+    });
+  } else {
+    // 降級：從 localStorage 讀回（避免重整後跳回 HTML 寫死的預設值）
+    totalLeavesGenerated = loadStat(STAT_KEYS.leave, STAT_DEFAULTS.leave);
+    totalAdmissionsChecked = loadStat(STAT_KEYS.admission, STAT_DEFAULTS.admission);
+    totalChatResponses = loadStat(STAT_KEYS.chat, STAT_DEFAULTS.chat);
+    renderDashboardStats();
   }
 
   // Helper function to copy text with button feedback
@@ -143,8 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
         leaveOutput.textContent = letter;
 
         // Update stats
-        totalLeavesGenerated += 1;
-        updateDashboardStats();
+        incrementStat('leave');
       }, 1200);
     });
   }
@@ -275,8 +349,7 @@ document.addEventListener('DOMContentLoaded', () => {
         admissionOutput.innerHTML = htmlContent;
 
         // Update stats
-        totalAdmissionsChecked += 1;
-        updateDashboardStats();
+        incrementStat('admission');
       }, 1200);
     });
   }
@@ -979,20 +1052,30 @@ document.addEventListener('DOMContentLoaded', () => {
       responseText = getAIResponse(userMessage);
     } else {
       try {
-        const uniqueKB = {};
-        const mainKeys = ['交通', '鮮奶', '請假', '冷氣', '認識', '最新', '處室', '報修', '幼兒園', '平台', '招生', '午餐', '一年一班', '校長'];
         const dynamicContext = [];
-        mainKeys.forEach(k => {
-          if (chatKnowledgeBase[k]) {
-            dynamicContext.push(`[主題：${k}]\n${chatKnowledgeBase[k]}`);
-          }
-        });
+        const seenValues = new Set(); // 依「內容」去重，避免別名 key 指向同一段資料時重複餵入
 
-        // Add lunch menu context dynamically if dates are queried
+        // 判斷是否為「每日菜單」這類日期 key（含數字且帶 月/日/「/」），這類只在使用者問到特定日期時才加入
+        const isDateKey = (k) => /\d/.test(k) && (k.includes('月') || k.includes('日') || k.includes('/'));
+
+        // 1. 一般主題：自動納入資料庫中所有非日期主題，確保新擴充的 Q&A 一定會餵給 Gemini
+        for (const k in chatKnowledgeBase) {
+          if (isDateKey(k)) continue;
+          const value = chatKnowledgeBase[k];
+          if (!value || seenValues.has(value)) continue;
+          seenValues.add(value);
+          dynamicContext.push(`[主題：${k}]\n${value}`);
+        }
+
+        // 2. 每日午餐菜單：僅在使用者問到日期時動態加入，避免上下文塞爆
         if (userMessage.includes('月') || userMessage.includes('/') || /\d+/.test(userMessage)) {
           for (const k in chatKnowledgeBase) {
-            if ((k.includes('月') || k.includes('/')) && userMessage.includes(k.replace('月', '').replace('日', '').trim())) {
-              dynamicContext.push(`[主題：${k} 午餐菜單]\n${chatKnowledgeBase[k]}`);
+            if (!isDateKey(k)) continue;
+            const value = chatKnowledgeBase[k];
+            if (!value || seenValues.has(value)) continue;
+            if (userMessage.includes(k.replace('月', '').replace('日', '').trim())) {
+              seenValues.add(value);
+              dynamicContext.push(`[主題：${k} 午餐菜單]\n${value}`);
             }
           }
         }
@@ -1161,8 +1244,7 @@ ${kbContextString}
       appendMessage('received', response);
       
       // Update statistics
-      totalChatResponses += 1;
-      updateDashboardStats();
+      incrementStat('chat');
     }).catch(err => {
       const tempIndicator = document.getElementById('temp-typing-indicator');
       if (tempIndicator) tempIndicator.remove();
@@ -1214,8 +1296,7 @@ ${kbContextString}
         appendMessage('received', response);
 
         // Update statistics
-        totalChatResponses += 1;
-        updateDashboardStats();
+        incrementStat('chat');
       }).catch(err => {
         const tempIndicator = document.getElementById('temp-typing-indicator');
         if (tempIndicator) tempIndicator.remove();

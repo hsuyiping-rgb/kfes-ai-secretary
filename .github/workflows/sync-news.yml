@@ -1,0 +1,50 @@
+name: 同步學校最新消息 (sync news)
+
+# 自動執行 scripts/sync_school_data.py，抓取光復國小官網最新公告，
+# 更新 assets/latest_news.json 並 commit 回 repo，讓 GitHub Pages 自動重新部署。
+#
+# 排程時間（cron 為 UTC，台灣為 UTC+8）：
+#   - 23:30 UTC = 台灣 07:30（上班前）
+#   - 04:30 UTC = 台灣 12:30（中午）
+# 也可在 Actions 分頁手動點「Run workflow」立即執行。
+#
+# 注意：GitHub 排程在尖峰時段可能延遲數分鐘；若 repo 連續 60 天沒有任何
+#       推送/活動，排程會被自動停用，屆時到 Actions 分頁手動跑一次即可恢復。
+
+on:
+  schedule:
+    - cron: '30 23 * * *'
+    - cron: '30 4 * * *'
+  workflow_dispatch:        # 允許手動觸發
+
+# 讓內建的 GITHUB_TOKEN 有權限把更新 commit 回 repo
+permissions:
+  contents: write
+
+jobs:
+  sync-news:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 取出原始碼
+        uses: actions/checkout@v4
+
+      - name: 安裝 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: 執行抓取腳本
+        run: python scripts/sync_school_data.py
+
+      - name: 有變動才 commit & push
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -n "$(git status --porcelain assets/latest_news.json)" ]; then
+            git add assets/latest_news.json
+            git commit -m "chore: 自動同步學校最新消息 (auto sync news)"
+            git push
+            echo "已更新並推送最新消息。"
+          else
+            echo "最新消息無變動，略過 commit。"
+          fi
