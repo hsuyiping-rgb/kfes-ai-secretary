@@ -40,13 +40,13 @@
    ========================================================================== */
 
 const firebaseConfig = {
-  apiKey: "貼上你的 apiKey",
-  authDomain: "貼上你的 authDomain",
-  databaseURL: "貼上你的 databaseURL",   // ← 必填，Realtime Database 網址
-  projectId: "貼上你的 projectId",
-  storageBucket: "貼上你的 storageBucket",
-  messagingSenderId: "貼上你的 messagingSenderId",
-  appId: "貼上你的 appId"
+  apiKey: "AIzaSyDbm_JKQG9XnRSVKnv268HRYwsRVOC4GGY",
+  authDomain: "gemini-video-analysis-9875.firebaseapp.com",
+  databaseURL: "https://gemini-video-analysis-9875-default-rtdb.asia-southeast1.firebasedatabase.app",   // ← 必填，Realtime Database 網址
+  projectId: "gemini-video-analysis-9875",
+  storageBucket: "gemini-video-analysis-9875.firebasestorage.app",
+  messagingSenderId: "352937695185",
+  appId: "1:352937695185:web:177a8fbae5a188b7a272f0"
 };
 
 // 只有在「設定已填好」且「SDK 已載入」時才初始化 Firebase；
