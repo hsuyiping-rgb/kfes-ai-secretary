@@ -12,3 +12,6 @@ $RECYCLE.BIN/
 # Gemini config/system folders (if any)
 .gemini/
 .system_generated/
+
+# Claude Code local-only settings (permissions etc.)
+.claude/settings.local.json

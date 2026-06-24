@@ -107,7 +107,7 @@
               </div>
               <div class="welcome-message">
                 <h1>親愛的家長與訪客，您好！我是「小光」✨</h1>
-                <p>今天也是活力滿滿的一天！無論是幫孩子請假、查詢新生入學手續與附幼招生，還是想查詢學校數位聯絡簿、午餐菜單，我都準備好隨時協助您了。點擊左側選單，讓我為您的親校溝通與訪客諮詢帶來最溫馨的智慧服務吧！🎒</p>
+                <p>今天也是活力滿滿的一天！無論是幫孩子請假、查詢新生入學手續與附幼招生，還是想查詢學校作息、午餐菜單、轉出入、交通位置....我都準備好隨時協助您了。點擊左側選單，讓我為您的親校溝通與訪客諮詢帶來最溫馨的智慧服務吧！🎒</p>
               </div>
             </div>
             <div class="welcome-mascots">
@@ -129,7 +129,7 @@
               </div>
               <div class="stat-info">
                 <h4>本月家長請假服務</h4>
-                <span id="stat-leave-count">86</span>
+                <span id="stat-leave-count">0</span>
               </div>
             </div>
             <div class="stat-card">
@@ -138,7 +138,7 @@
               </div>
               <div class="stat-info">
                 <h4>新生報到指南下載</h4>
-                <span id="stat-admission-count">142</span>
+                <span id="stat-admission-count">0</span>
               </div>
             </div>
             <div class="stat-card">
@@ -147,7 +147,7 @@
               </div>
               <div class="stat-info">
                 <h4>AI 諮詢解答次數</h4>
-                <span id="stat-chat-count">3,250</span>
+                <span id="stat-chat-count">0</span>
               </div>
             </div>
           </div>
@@ -488,6 +488,9 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
   <script src="firebase-config.js"></script>
+
+  <!-- 在地知識庫資料（家長/訪客問答）；必須在 app.js 之前載入 -->
+  <script src="knowledge-base.js"></script>
 
   <script src="app.js"></script>
 </body>
