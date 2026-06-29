@@ -34,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const useFirebase = (typeof firebase !== 'undefined') &&
                       firebase.apps && firebase.apps.length > 0;
   const statsDbRef = useFirebase ? firebase.database().ref('stats') : null;
+  const chatLogsRef = useFirebase ? firebase.database().ref('chat_logs') : null;
 
   // localStorage 降級：讀取已累計的數字，沒有就用基準值
   function loadStat(key, fallback) {
@@ -117,6 +118,34 @@ document.addEventListener('DOMContentLoaded', () => {
       localStorage.setItem(STAT_KEYS[field], next);
       applyStatValue(field, next);
       renderDashboardStats();
+    }
+  }
+
+  // 「無法回答」的辨識標記：命中任一即代表小光沒給出實質答案、只能請家長改打總機。
+  // 1) 在地知識庫找不到對應 key 時的 fallback；2) AI 模式判定官方資料庫無記錄時附加的提示。
+  const UNANSWERED_MARKERS = [
+    '資料庫中目前沒有此問題的解答',
+    '以上回答為 AI 智慧模式的通用說明'
+  ];
+  function isAnswered(responseText) {
+    if (!responseText) return false;
+    return !UNANSWERED_MARKERS.some(marker => responseText.includes(marker));
+  }
+
+  // 記錄家長提問內容（僅供測試與擴增知識庫；不記名、不存回答全文）。
+  // q=問題、m=模式(ai/kb)、a=是否答得出來、t=伺服器時間戳。
+  // 寫入 Firebase chat_logs 節點，規則設為 append-only 且不公開讀取（只有主控台看得到）。
+  function logChatQuestion(question, responseText) {
+    if (!chatLogsRef || !question) return;
+    try {
+      chatLogsRef.push({
+        q: String(question).slice(0, 500),
+        m: localStorage.getItem('gemini_api_key') ? 'ai' : 'kb',
+        a: isAnswered(responseText),
+        t: firebase.database.ServerValue.TIMESTAMP
+      });
+    } catch (e) {
+      console.warn('[ChatLog] 記錄提問失敗：', e);
     }
   }
 
@@ -664,13 +693,16 @@ ${kbContextString}
       if (tempIndicator) tempIndicator.remove();
 
       appendMessage('received', response);
-      
+
       // Update statistics
       incrementStat('chat');
+      logChatQuestion(text, response);
     }).catch(err => {
       const tempIndicator = document.getElementById('temp-typing-indicator');
       if (tempIndicator) tempIndicator.remove();
-      appendMessage('received', getAIResponse(text));
+      const fallback = getAIResponse(text);
+      appendMessage('received', fallback);
+      logChatQuestion(text, fallback);
     });
   }
 
@@ -719,10 +751,13 @@ ${kbContextString}
 
         // Update statistics
         incrementStat('chat');
+        logChatQuestion(questionText, response);
       }).catch(err => {
         const tempIndicator = document.getElementById('temp-typing-indicator');
         if (tempIndicator) tempIndicator.remove();
-        appendMessage('received', getAIResponse(questionText));
+        const fallback = getAIResponse(questionText);
+        appendMessage('received', fallback);
+        logChatQuestion(questionText, fallback);
       });
     });
   });
