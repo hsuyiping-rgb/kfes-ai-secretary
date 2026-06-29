@@ -35,23 +35,23 @@ scripts/
 5. **小光對話室 chat** — 問答聊天，見下方
 
 ### 聊天問答：雙模式（這是專案核心）
-`generateAIResponse()` in [app.js](app.js:1046)：
+`generateAIResponse()` in [app.js](app.js:468)：
 
-- **在地知識庫模式（預設，無 API key）**：`getAIResponse()` in [app.js](app.js)。比對 `chatKnowledgeBase`（定義在 [knowledge-base.js](knowledge-base.js)，約 21 個主題 + 大量別名 + 午餐菜單，合計約 190 個 key，value 是預寫好的 Markdown 答案）。比對方式為 `userMessage.includes(key)`，**key 依長度由長到短排序**避免短 key 誤命中。
+- **在地知識庫模式（預設，無 API key）**：`getAIResponse()` in [app.js](app.js:453)。比對 `chatKnowledgeBase`（定義在 [knowledge-base.js](knowledge-base.js)，約 21 個主題 + 大量別名 + 午餐菜單，合計約 190 個 key，value 是預寫好的 Markdown 答案）。比對方式為 `userMessage.includes(key)`，**key 依長度由長到短排序**避免短 key 誤命中。
 - **AI 智慧模式（使用者在 UI 填入 Gemini API key）**：把 `chatKnowledgeBase` 全部主題（日期類 key 除外）組成 system instruction 的 RAG 背景，連同問題打 `gemini-1.5-flash` 的 `generativelanguage.googleapis.com` REST API。失敗會自動 fallback 回在地知識庫。
 - API key 存在使用者瀏覽器 `localStorage` 的 `gemini_api_key`，**不進 repo**。UI badge 會顯示目前模式。
 
 > ⚠️ 擴充知識庫只要在 [knowledge-base.js](knowledge-base.js) 往 `chatKnowledgeBase` 加 key/value 即可，兩個模式會自動吃到（AI 模式靠 app.js 的迴圈自動納入，不需要另外註冊）。日期型 key（含數字＋「月/日/／」）只有在使用者問到該日期時才餵給 Gemini，避免 context 爆掉。
 
 ### 統計計數器（Firebase）
-- 三個 dashboard 數字（leave / admission / chat）。`incrementStat()` in [app.js:102](app.js:102)。
+- 三個 dashboard 數字（leave / admission / chat）。`incrementStat()` in [app.js:110](app.js:110)。
 - 若 [firebase-config.js](firebase-config.js) 已設定 → 用 Firebase Realtime Database 跨裝置累計；否則自動降級為單機 `localStorage`。
 - Firebase config 是**前端公開設定，非機密**，可安全 commit。Realtime Database 規則限制成只能 +1 遞增（防惡意竄改），規則內容寫在 [firebase-config.js](firebase-config.js) 檔頭註解。
 
 ### 最新消息自動同步
 - [scripts/sync_school_data.py](scripts/sync_school_data.py) 用正則爬 `kfes.ntpc.edu.tw` 首頁公告連結（`/p/406-` 或 `r23.php`），取前 8 筆寫進 `assets/latest_news.json`。
 - [.github/workflows/sync-news.yml](.github/workflows/sync-news.yml) 每天 UTC 23:30 / 04:30（台灣 07:30 / 12:30）自動跑並 commit。可在 Actions 分頁手動觸發。
-- 前端 `loadLatestNews()` in [app.js:1309](app.js:1309) 讀這個 JSON 顯示在儀表板。
+- 前端 `loadLatestNews()` in [app.js:731](app.js:731) 讀這個 JSON 顯示在儀表板。
 
 ## 本地預覽
 
